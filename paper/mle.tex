@@ -1,0 +1,64 @@
+
+We place independent uninformative exponential priors with mean $10$ (and variance $100$) on the scale parameter $\bkappa$, and a uniform prior on the location
+parameter $G$. We restrict $H$ to be the identity matrix. Inferences were carried out using the Hamiltonian sampler to produce $10000$ samples, with a
+burn-in period of $1000$. For the leapfrog dynamics, we set a step size of $0.3$, with the number of steps equal to $5$.
+
+%The right plot in Figure \ref{fig:vcg_param1} shows the posterior distribution over the first component of $\bkappa$, which is centered around $1.75$
+%(the second component is similar).
+For comparison, we use the maximum likelihood estimates of the parameters $\bkappa$ and $G$. Obtaining the MLE of
+$G$ is straightforward \citep{khatri1977}; %however, the normalization constant $Z(\bkappa)$ makes the MLE of $\bkappa$ harder to estimate.
+and for $\bkappa$,
+% evaluating the likelihood of the observations is intractable
+we follow \cite{khatri1977} and use the approximation of equation \eqref{eq:hgf_asymp} for $Z(\bkappa)$. Performing a grid search over the interval
+$0$ to $20$, we obtain ML estimates of % to estimate the components of $\bkappa$.
+$11.9$ and $5.9$ for $\kappa_1$ and $\kappa_2$. These are plotted in the right half of Figure \ref{fig:vcg_data} as the red circles, with the blue bars showing the
+Bayesian posteriors over these components.
+Similarly, the bold straight lines in Figure \ref{fig:vcg_data}(left) show the MLE estimates of the components of $G$, with the small
+circles corresponding to $90\%$ Bayesian credible regions
+estimated from the MCMC output.
+The dashed circles correspond to $90\%$ predictive probability regions for the Bayesian model. To produce these, we generated  $50$ points on $V_{3,2}$ for each MCMC sample,
+with parameters specified by that sample. The dashed circles contain $90\%$ of the generated points across all MCMC samples.
+%samples for the parameters of
+%While MLE of the orientation $G$ agrees with the mode of our Bayesian posterior, we get very large esimates of $\bkappa$ ($11.9$ and $5.9$). These large
+%estimates can be attributed to using the asymptotic approximation to the likelihood (as well as the lack of any regularization for the MLE), and results in overconfidence
+%in predictions. By contrast, the exact Bayesian approach is robust to these issues.
+
+% \begin{figure}
+% \centering
+%   \includegraphics[width=.3\textwidth]{figs/plot_vcg_kap1.pdf}
+% \centering
+%   \includegraphics[width=.3\textwidth]{figs/plot_vcg_kap2.pdf}
+%\caption{Posterior distributions over $\kappa_1$, and $\kappa_2$. The red circles are ML estimates.}
+% \label{fig:vcg_param1}
+% \end{figure}
+
+%MLE:   68.28 + 7.29
+%Bayes:  80.01 + 5.26
+\begin{table}
+\caption{Log predictive-probability of $20$ random held out observations, averaged over $5$ runs.}
+\begin{tabular}{|l|l|l|}
+\hline
+  & MLE & Bayesian inference \\
+\hline
+Log predictive-probability & $68.78\pm 9.96$ & $78.72 \pm 8.26$ \\
+\hline
+\end{tabular}
+  \label{tbl:cross_val}
+\end{table}
+
+
+% differntiating results in a system of equations that is easy to minimize numerically, and Figure \ref{} show the results.
+To quantitatively compare the Bayesian posterior with the ML estimate, we ran a $5$-fold cross-validation,
+holding out a random $20$ percent of the observations (call this $X_{test}$), and training the models on the remaining data (call this
+$X_{train}$). Table \ref{tbl:cross_val} compares the log probability of the test data under the maximum likelihood estimate, $p(X_{test}|\hat{\bkappa}_{MLE}, \hat{G}_{MLE})$,
+with the predictive probability $p(X_{test}|X_{train}) = \int p(X_{test}|\bkappa,G) p(\bkappa,G|X_{train}) \dif \bkappa \dif G$. We approximated
+the latter integral by a summation over the MCMC samples, and to evaluate the probabilities $p(X_{test}|\bkappa, G)$ for both methods,
+we approximated $Z(\bkappa)$ using equation \eqref{eq:hgf_asymp}.
+We see that the log predictive-probability under the Bayesian approach exceeds that of the MLE by about $10$, and demonstrates the importance
+of maintaining uncertainty over the matrix Langevin parameters.
+
+%Running our nonparametric analysis on this dataset reveals (as the data suggests) that
+%there is no obvious clustering structure, with the data well modelled by a parametric Matrix Langevin distribution. For instance, the
+%posterior distribution over the number of clusters is restricted mainly to values less than $2$ (with most probability assigned to $1$).
+%In this instance, our nonparametric prior reduces to the simpler parametric distribution. An interesting future direction is to use such ideas to
+%build and study nonparametric tests of whether or not the observed data belongs to some parametric family on the Stiefel manifold.

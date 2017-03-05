@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: data_aug_rej.aux
+The style file: biometrika.bst
+Database file #1: refs.bib
+You've used 30 entries,
+            2826 wiz_defined-function locations,
+            840 strings with 10048 characters,
+and the built_in function-call counts, 16067 in all, are:
+= -- 1544
+> -- 752
+< -- 18
++ -- 296
+- -- 257
+* -- 1448
+:= -- 2810
+add.period$ -- 94
+call.type$ -- 30
+change.case$ -- 238
+chr.to.int$ -- 29
+cite$ -- 30
+duplicate$ -- 741
+empty$ -- 1143
+format.name$ -- 350
+if$ -- 3144
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 32
+newline$ -- 154
+num.names$ -- 126
+pop$ -- 228
+preamble$ -- 1
+purify$ -- 202
+quote$ -- 0
+skip$ -- 395
+stack$ -- 0
+substring$ -- 995
+swap$ -- 199
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 264
+warning$ -- 0
+while$ -- 146
+width$ -- 0
+write$ -- 394

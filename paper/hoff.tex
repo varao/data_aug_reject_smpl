@@ -1,0 +1,98 @@
+
+\subsection{A rejection  sampling algorithm} \label{sec:prior_sim}
+
+We first describe a rejection sampling algorithm from \cite{hoff2009} to draw a sample from the matrix Langevin distribution.
+%For parameterizations other than the uniform distribution (i.e.\ for $\bkappa > 0$), even this is non-trivial.
+For simplicity, we assume $F$ is orthonormal (i.e.\ that $H$ equals the identity matrix, $I_p$); in the general case, we simply rotate  the resulting draw 
+by $H$ (since if $X \sim \ml(\cdot|F)$, then $XH \sim \ml(\cdot|FH^T)$).
+%%Consider the matrix Langevin prior on the Stiefel manifold $V_{p,d}$ with parameters $H$ and $\bkappa$.
+%%Recall that the matrix Langevin has density given by:
+%%\begin{align}
+%%  P(X|G, H, \bkappa) &= \etr(H \bkappa G^T X)/Z(\bkappa)
+%%\end{align}
+%Let $F = G \bkappa H$ be the singular value decomposition of $F$, with the elements of $\bkappa \ge 0$. For simplicity (and as in Section \ref{sec:Bays_inf}), we
+%restrict ourselves to
+%the case $F = \bkappa H$.
+%Recall that we restrict $H^TH = I_p$, additionally, the normalization constant $Z(\bkappa)$ depends only on $\bkappa$.
+%We rewrite the prior as
+%\begin{align}
+%  P(X|H, \bkappa) &= \etr(H^T \bkappa X)/Z(\bkappa)
+%We saw in section \ref{sec:param} that
+\cite{chikusebook} suggested a simple rejection sampling scheme
+based on the envelope:
+\begin{align}
+  \etr(\bkappa G^T X) & \le \prod_{i=1}^p \exp(\bkappa_i).  \label{eq:chik_bound}
+\end{align}
+The right-hand side is the mode of $\ml(X|G, \bkappa)$ at $X=G$.
+In this scheme, one proposes values uniformly on $V_{p,d}$, accepting a draw $X$ with probability
+$\exp(\bkappa G^T X)/\left(\prod_{i=1}^d \exp(\bkappa_i) \right)$.
+%Each accepted point is then a sample from the Matrix Langevin distribution.
+However, this bound is very loose, making this very inefficient. A rejection sampling algorithm with a significantly
+higher acceptance rate was provided in \cite{hoff2009}. Rather than drawing proposals uniformly on $V_{p,d}$, this used the parameters $G$ and
+$\bkappa$ to construct a better proposal distribution that we outline in Algorithm \ref{alg:rej_smplr}. At a high level, the algorithm sequentially proposes vectors
+from the matrix Langevin on the unit sphere: this is the vector-valued von Mises-Fisher distribution and is straightforward to simulate
+\citep{wood1994}.
+The mean of the $r${th} vector is $G_{[:r]}$, the $r${th} column of $G$, projected onto $N_r$, the nullspace of the earlier vectors.
+Having sampled this $r${th} vector,
+it is projected back onto the nullspace $N_r$ and normalized, giving a unit vector orthogonal to the earlier $r-1$ vectors.
+This process is repeated $p$ times. Call the resulting
+proposal distribution $\seq$; for more details, see \cite{hoff2009}.
+
+{
+\vspace{.1in}
+\begin{algorithm}[H]
+\caption{Proposal distribution $\seq(\cdot|F)$ for matrix Langevin distribution \citep{hoff2009}}\label{alg:rej_smplr}
+\begin{tabular}{p{1.4cm}p{12.2cm}}
+%\hline
+\textbf{Input:}  & The parameters $ F = G\bkappa$ (write $G_{[:i]}$ for column $i$ of $G$) \\
+\textbf{Output:} & An output  $X \in V_{p,d}$ (write $X_{[:i]}$ for column $i$ of $X$) \\
+\hline
+\end{tabular}
+\begin{algorithmic}[1]
+  \STATE Sample $X_{[:1]} \sim \ml(\cdot|\kappa_i G_{[:1]})$.
+  \STATE For $r \in \{2,\cdots p\}$
+  \begin{enumerate}[(a)]
+    \item Construct $N_r$, an orthogonal basis for the nullspace of $\{X_{[:1]},\cdots X_{[:r-1]} \}$.
+    \item Sample $z \sim \ml(\cdot|\kappa_r N^T_r G_{[:r]})$.
+    \item Set $X_{[:r]} = z^T N_r/ \|z^T N_r\| $.
+  \end{enumerate}
+\end{algorithmic}
+\end{algorithm}
+}
+
+It can be seen that $\seq$ is density on the Stiefel manifold taking the form
+\begin{align}
+  \seq(X|G, \bkappa) &= \left\{\prod_{r=1}^p \frac{ \|\kappa_r N^T_r G_{[:r]}/2 \|^{(d-r-1)/2 }}{ \Gamma(\frac{d-r+1}{2} ) I_{(d-r-1)/2}(\| \kappa_r N^T_r G_{[:r]} \|)} \right\} \etr(\bkappa G^T X) \label{eq:hoff_seq}\\
+               &:= \etr(\bkappa G^T X)/D(X, \bkappa, G) \nonumber
+\end{align}
+Here, $I_k(\cdot)$ is the modified Bessel function of the first kind. $I_k(x)/x^k$ is an increasing function of $x$,
+and  $\|N^T_r G_{[:r]}\| \le \|G_{[:r]}\| = 1$, so that we have the following bound:
+\begin{align}
+ D(X,\bkappa, G) \le \prod_{r=1}^p  \frac{ \Gamma(\frac{d-r+1}{2} ) I_{(d-r-1)/2}(\| \kappa_r \|)}{ \|\kappa_r/2 \|^{(d-r-1)/2 }} := D(\bkappa) \nonumber
+\end{align}
+This implies $\etr(\bkappa G^T X) \le D(\bkappa) \seq(X|G,\bkappa) $, which is much tighter than equation \eqref{eq:chik_bound}. %\cite{hoff2009} uses this
+We can now construct the following rejection sampler: draw a sample $X$ from $\seq(\cdot)$, and accept it with probability
+$D(X, \bkappa, G)/D(\bkappa)$. The set of accepted proposals forms a draw from $\ml(\cdot|G,\bkappa)$, and to obtain samples from $\ml(\cdot|G,\bkappa,H)$,
+simply postmultiply these by $H$.
+
+\begin{comment}
+While this approach to sampling from the prior is typically adequate, we obtain a different upper envelope to the Matrix Langevin distribution using results
+from \citep{Luke1972}.  In that work, two bounds were provided, both ideal for our purposes:
+\begin{align}
+  \frac{\Gamma(\nu+1)I_{\nu}(x)}{(x/2)^{\nu}} &\le e^x \left( \frac{1}{2\nu + 3} + \frac{2(\nu+1)}{2\nu+3}\left[1 + \frac{2\nu+3)x}{2(\nu+1)}\right]^{-1} \right)\quad x\ge0,\ \nu \ge -1/2,\\
+  \frac{\Gamma(\nu+1)I_{\nu}(x)}{(x/2)^{\nu}} &\le \cosh(x) \quad x\ge0,\ \nu \ge -1/2
+\end{align}
+While, the latter is a bit more convenient, the former is tighter, and we shall use it in the following (referring to it as $b_{\nu}(x)$). For equation \eqref{eq:hoff_seq},
+we have the following bound $B(X)$ on $K(X)$:
+\begin{align}
+ K(X) \le \prod_{r=1}^p  b_{d-r-1}(N^T_r F_{[,r]}) := B(X)
+\end{align}
+Now, a proposal from $\seq$ is acccepted with probability $K(X)/B(X)$.
+By allowing the bound to depend on $X$, we can control the discrepancy between $B(X)$ and $K(X)$ resulting in fewer rejected samples, and greater efficiency.
+Note though that our bound $B(X)$ is not uniformly tighter that the bound $B_u$ of \citep{hoff2009}; in particular at the point $X = H$ on the Stiefel manifold,
+$B(X) > K(X) = B_u$. On the other hand, our bound has the property that $\inf_{X \in V_{p,d}} K(X)/B(X) > \inf_{X \in V_{p,d}} K(X)/B_u$. This latter property will
+be crucial for efficient posterior sampling. Of course, one can always combine the two bounds, defining $\hat{B}(X) = \min (B_u, B(X))$.
+%is useful in its own right, providing a more efficient way to sample from the Matrix Langevin. Additionally, our approach will prove crucial for one of our
+%algorithms for posterior sampling; with the bound of \cite{hoff2009} being too loose to be practical.
+\end{comment}
+

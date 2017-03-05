@@ -1,0 +1,182 @@
+%\documentclass[manuscript]{biometrika}
+\documentclass[lineno]{biometrika}
+
+\usepackage{amsmath}
+%\usepackage{varwidth}
+
+%% Please use the following statements for
+%% managing the text and math fonts for your papers:
+\usepackage{times}
+\usepackage{bm}
+\usepackage{natbib}
+
+\makeatletter
+
+\usepackage{verbatim}
+\usepackage{graphicx,epsfig}
+\usepackage{amsmath,amssymb,latexsym, amsfonts, amscd}
+
+\usepackage[plain,noend]{algorithm2e}
+
+\makeatletter
+\renewcommand{\algocf@captiontext}[2]{#1\algocf@typo. \AlCapFnt{}#2} % text of caption
+\renewcommand{\AlTitleFnt}[1]{#1\unskip}% default definition
+\def\@algocf@capt@plain{top}
+\renewcommand{\algocf@makecaption}[2]{%
+  \addtolength{\hsize}{\algomargin}%
+  \sbox\@tempboxa{\algocf@captiontext{#1}{#2}}%
+  \ifdim\wd\@tempboxa >\hsize%     % if caption is longer than a line
+    \hskip .5\algomargin%
+    \parbox[t]{\hsize}{\algocf@captiontext{#1}{#2}}% then caption is not centered
+  \else%
+    \global\@minipagefalse%
+    \hbox to\hsize{\box\@tempboxa}% else caption is centered
+  \fi%
+  \addtolength{\hsize}{-\algomargin}%
+}
+\makeatother
+\SetAlCapSty{}
+\def\Bka{{\it Biometrika}}
+\def\AIC{\textsc{aic}}
+\def\T{{ \mathrm{\scriptscriptstyle T} }}
+\def\v{{\varepsilon}}
+
+
+\newcommand{\figref}[1]{\figurename~\ref{#1}}
+\usepackage[usenames]{color}
+
+\def\cM{\mathcal{M}}
+\def\cL{\mathcal{L}}
+\def\cH{\mathcal{H}}
+
+\def\cO{\mathcal{O}}
+\def\cT{\mathcal{T}}
+\def\cU{\mathcal{U}}
+\def\cA{\mathcal{A}}
+\def\cV{\mathcal{V}}
+\def\cD{\mathcal{D}}
+\def\cG{\mathcal{G}}
+\def\cW{\mathcal{W}}
+\def\etr{\text{etr}}
+\def\hZ{\hat{Z}}
+\def\hX{\hat{X}}
+\DeclareMathOperator{\Tr}{Trace}
+\DeclareMathOperator{\diag}{Diag}
+\def\bkappa{\boldsymbol\kappa}
+\def\bkappa{\kappa}
+
+\def\bY{\mathbf{Y}}
+\def\cY{\mathcal{Y}}
+\def\cX{\mathcal{X}}
+\def\tD{\tilde{D}}
+\def\bX{\mathbb{X}}
+\def\bU{\mathbb{U}}
+\def\htheta{\hat{\theta}}
+\newcommand{\dif}{\mathrm{d}}
+
+\def\ml{{p}_{\text{ML}}}
+\def\seq{{p}_{\text{seq}}}
+%\allowdisplaybreaks
+
+\begin{document}
+
+\jname{Biometrika}
+%% The year, volume, and number are determined on publication
+\jyear{2014}
+\jvol{99}
+\jnum{1}
+%% The \doi{...} and \accessdate commands are used by the production team
+%\doi{10.1093/biomet/asm023}
+\accessdate{Advance Access publication on 31 July 2014}
+\copyrightinfo{\Copyright\ 2014 Biometrika Trust\goodbreak {\em Printed in Great Britain}}
+
+%% These dates are usually set by the production team
+\received{June 2014}
+\revised{June 2014}
+
+%% The left and right page headers are defined here:
+%\markboth{A. C. Davison, R. Gessner \and D. M. Titterington}{Biometrika style}
+
+%% Here are the title, author names and addresses
+\markboth{Vinayak Rao, Lizhen Lin, \and David Dunson}{Data augmentation for models based on rejection sampling}
+\title{Data augmentation for models based on rejection sampling}
+
+\author{Vinayak Rao}
+\affil{Department of Statistics, Purdue University, West Lafayette, Indiana 47907, U.S.A. \email{varao@purdue.edu} }
+\author{Lizhen Lin}
+\affil{Department of Statistics and Data Science, the University of Texas, Austin, Texas 78712, U.S.A.  \email{lizhen.lin@austin.utexas.edu}}
+\author{David Dunson}
+\affil{Department of Statistical Science, Duke University, Durham, North Carolina 27708, U.S.A. \email{dunson@duke.edu}}
+
+
+\maketitle
+
+\begin{abstract}
+We present a data augmentation scheme to perform Markov chain Monte Carlo inference for models where data generation involves a
+rejection sampling algorithm. 
+Our idea %, which seems to be missing in the literature, is %to instantiate the rejected proposals preceding each data point, and we show that this can be done 
+is a simple scheme to instantiate the rejected proposals preceding each data point. %easily and efficiently.
+The resulting joint probability over observed and rejected variables can be much simpler than the marginal distribution over the
+observed variables, which often involves intractable integrals. 
+%Our algorithm is an instance of a growing body of work on exact Markov chain Monte Carlo inference for 
+%doubly-intractable distributions and 
+We consider three problems: modeling flow-cytometry measurements subject to truncation; 
+the Bayesian analysis of the matrix Langevin distribution on the Stiefel manifold; and
+Bayesian inference for a nonparametric Gaussian process density model.
+The latter two are instances of doubly-intractable Markov chain Monte Carlo problems, where evaluating the likelihood 
+is intractable. % distributions and we consider two such problems. 
+Our experiments demonstrate superior performance over state-of-the-art sampling algorithms for such problems.
+
+~\\
+\noindent \emph{Some key words}: Bayesian inference; Density estimation;  Intractable likelihood; Gaussian process; Matrix Langevin distribution; Markov Chain Monte Carlo; Rejection sampling; Truncation.
+
+\end{abstract}
+
+
+
+\section{Introduction}
+
+
+\input{intro.tex}
+
+
+\section{Rejection sampling}
+\input{rejection.tex}
+
+\section{Flow cytometry data} \label{sec:flow}
+\input{flowcyto.tex}
+
+\section{Bayesian inference for the matrix Langevin distribution} \label{sec:Bays_inf}
+\input{bayes_model.tex}
+
+
+%\section{Experiments}  \label{sec:Bayes_expt}
+\input{bayes_expts.tex}
+
+\section{The Gaussian process density sampler}\label{sec:gpds}
+\input{gpds.tex}
+
+
+\section{Future work}\label{sec:conc}
+\input{conclusion.tex}
+
+
+\section*{Acknowledgement}
+This work was supported by the National Institute of Environmental Health Sciences of the National Institute of Health.
+We are grateful to the editor and reviewers for valuable comments.
+
+
+\appendix
+\section{Proofs}
+\input{proofs.tex} \label{sec:proofs}
+%\input{proofs_long.tex} 
+
+\section{Gradient information}
+\input{gradient.tex} \label{sec:gradient}
+
+
+\bibliographystyle{biometrika}
+%\bibliographystyle{plain}
+\bibliography{refs}
+
+\end{document}

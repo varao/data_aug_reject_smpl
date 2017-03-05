@@ -1,0 +1,192 @@
+\begin{thebibliography}{30}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Aban et~al.(2006)Aban, Meerschaert \& Panorska}]{aban06}
+\textsc{Aban, I.~B.}, \textsc{Meerschaert, M.~M.} \& \textsc{Panorska, A.~K.}
+  (2006).
+\newblock Parameter estimation for the truncated {P}areto distribution.
+\newblock \textit{J. Amer. Statist. Assoc.} \textbf{101}, 270--277.
+
+\bibitem[{Adams et~al.(2009)Adams, Murray \& MacKay}]{adams_gpds}
+\textsc{Adams, R.~P.}, \textsc{Murray, I.} \& \textsc{MacKay, D. J.~C.} (2009).
+\newblock The {G}aussian process density sampler.
+\newblock In \textit{Adv. Neural Inf. Process. Syst. 21}, D.~Koller,
+  D.~Schuurmans, Y.~Bengio \& L.~Bottou, eds. MIT Press, pp. 9--16.
+
+\bibitem[{Alai et~al.(2013)Alai, Landsman \& Sherris}]{Alai2013}
+\textsc{Alai, D.~H.}, \textsc{Landsman, Z.} \& \textsc{Sherris, M.} (2013).
+\newblock Lifetime dependence modelling using a truncated multivariate {G}amma
+  distribution.
+\newblock \textit{Insurance Math. Econom.} \textbf{52}, 542--549.
+
+\bibitem[{Andrieu \& Roberts(2009)}]{AndRob10}
+\textsc{Andrieu, C.} \& \textsc{Roberts, G.~O.} (2009).
+\newblock {The pseudo-marginal approach for efficient Monte Carlo
+  computations}.
+\newblock \textit{Ann. Statist.} \textbf{37}, 697--725.
+
+\bibitem[{Beskos et~al.(2006)Beskos, Papaspiliopoulos, Roberts \&
+  Fearnhead}]{beskos06}
+\textsc{Beskos, A.}, \textsc{Papaspiliopoulos, O.}, \textsc{Roberts, G.~O.} \&
+  \textsc{Fearnhead, P.} (2006).
+\newblock Exact and computationally efficient likelihood-based estimation for
+  discretely observed diffusion processes.
+\newblock \textit{J. R. Statist. Soc. B} \textbf{68}, 333--382.
+
+\bibitem[{Bladt \& S{\o}rensen(2014)}]{bladt2014}
+\textsc{Bladt, M.} \& \textsc{S{\o}rensen, M.} (2014).
+\newblock Simple simulation of diffusion bridges with application to likelihood
+  inference for diffusions.
+\newblock \textit{Bernoulli} \textbf{20}, 645--675.
+
+\bibitem[{Brinkman et~al.(2007)Brinkman, Gasparetto, Lee, Ribickas, Perkins,
+  Janssen, Smiley \& Smith}]{Brink07}
+\textsc{Brinkman, R.~R.}, \textsc{Gasparetto, M.}, \textsc{Lee, S.-J.~J.},
+  \textsc{Ribickas, A.~J.}, \textsc{Perkins, J.}, \textsc{Janssen, W.},
+  \textsc{Smiley, R.} \& \textsc{Smith, C.} (2007).
+\newblock {High-Content} flow cytometry and temporal data analysis for defining
+  a cellular signature of {graft-versus}-host disease.
+\newblock \textit{Biol. Blood Marrow Trans.} \textbf{13}, 691--700.
+
+\bibitem[{Chikuse(2003)}]{chikusebook}
+\textsc{Chikuse, Y.} (2003).
+\newblock \textit{Statistics on Special Manifolds}.
+\newblock Springer, New York.
+
+\bibitem[{Dahlin et~al.(2015)Dahlin, Lindsten \& Sch{\"{o}}n}]{DahlinLS15}
+\textsc{Dahlin, J.}, \textsc{Lindsten, F.} \& \textsc{Sch{\"{o}}n, T.~B.}
+  (2015).
+\newblock {Particle Metropolis--Hastings using gradient and Hessian
+  information}.
+\newblock \textit{Statistics and Computing} \textbf{25}, 81--92.
+
+\bibitem[{Downs et~al.(1971)Downs, Liebman \& Mackay}]{vecdata}
+\textsc{Downs, T.~D.}, \textsc{Liebman, J.} \& \textsc{Mackay, W.} (1971).
+\newblock Statistical methods for vectorcardiogram orientations.
+\newblock In \textit{Vectorcardiography 2: Proc. XIth Intn. Symp.
+  Vectorcardiography}, R.~H. I.~Hoffman \& E.~E.~Glassman, eds. North-Holland,
+  Amsterdam., pp. 216--222.
+
+\bibitem[{Edelman et~al.(1998)Edelman, Arias \& Smith}]{Edelman98thegeometry}
+\textsc{Edelman, A.}, \textsc{Arias, T.~A.} \& \textsc{Smith, S.~T.} (1998).
+\newblock The geometry of algorithms with orthogonality constraints.
+\newblock \textit{SIAM J. Matrix Anal. Appl} \textbf{20}, 303--353.
+
+\bibitem[{Goethals et~al.(2009)Goethals, Ampe, Berkvens, Laevens, Janssen \&
+  Duchateau}]{Goeth09}
+\textsc{Goethals, K.}, \textsc{Ampe, B.}, \textsc{Berkvens, D.},
+  \textsc{Laevens, H.}, \textsc{Janssen, P.} \& \textsc{Duchateau, L.} (2009).
+\newblock Modeling interval-censored, clustered cow udder quarter infection
+  times through the shared gamma frailty model.
+\newblock \textit{J. Agr. Biol. Envir. Statist.} \textbf{14}, 1--14.
+
+\bibitem[{Hoff(2009{\natexlab{a}})}]{hoff2009jrssb}
+\textsc{Hoff, P.~D.} (2009{\natexlab{a}}).
+\newblock A hierarchical eigenmodel for pooled covariance estimation.
+\newblock \textit{J. R. Statist. Soc. B} \textbf{71}, 971--992.
+
+\bibitem[{Hoff(2009{\natexlab{b}})}]{hoff2009}
+\textsc{Hoff, P.~D.} (2009{\natexlab{b}}).
+\newblock {Simulation of the matrix Bingham--von Mises--Fisher distribution,
+  with applications to multivariate and relational data}.
+\newblock \textit{J. Comp. Graph. Stat.} \textbf{18}, 438--456.
+
+\bibitem[{Ishwaran \& James(2001)}]{IshJam2001}
+\textsc{Ishwaran, H.} \& \textsc{James, L.~F.} (2001).
+\newblock {G}ibbs sampling methods for stick-breaking priors.
+\newblock \textit{J. Amer. Statist. Assoc.} \textbf{96}, 161--173.
+
+\bibitem[{Jones \& Hobert(2001)}]{jones2001}
+\textsc{Jones, G.~L.} \& \textsc{Hobert, J.~P.} (2001).
+\newblock {Honest exploration of intractable probability distributions via
+  Markov chain Monte Carlo}.
+\newblock \textit{Statist. Sci.} \textbf{16}, 312--334.
+
+\bibitem[{Khatri \& Mardia(1977)}]{khatri1977}
+\textsc{Khatri, C.~G.} \& \textsc{Mardia, K.~V.} (1977).
+\newblock {The von Mises--Fisher matrix distribution in orientation
+  statistics}.
+\newblock \textit{J. R. Statist. Soc. B} \textbf{39}, 95--106.
+
+\bibitem[{Kume et~al.(2013)Kume, Preston \& Wood}]{Kume:2013:SAN}
+\textsc{Kume, A.}, \textsc{Preston, S.~P.} \& \textsc{Wood, A. T.~A.} (2013).
+\newblock Saddlepoint approximations for the normalizing constant of
+  {Fisher}--{Bingham} distributions on products of spheres and {Stiefel}
+  manifolds.
+\newblock \textit{Biometrika} \textbf{100}, 971--984.
+
+\bibitem[{Lee \& Scott(2012)}]{Lee2012}
+\textsc{Lee, G.} \& \textsc{Scott, C.} (2012).
+\newblock {EM} algorithms for multivariate {G}aussian mixture models with
+  truncated and censored data.
+\newblock \textit{Comput. Statist. Data Anal.} \textbf{56}, 2816--2829.
+
+\bibitem[{Liechty et~al.(2009)Liechty, Liechty \& M{\"u}ller}]{leich09}
+\textsc{Liechty, M.~W.}, \textsc{Liechty, J.~C.} \& \textsc{M{\"u}ller, P.}
+  (2009).
+\newblock The shadow prior.
+\newblock \textit{J. Comp. Graph. Statist.} \textbf{18}, 368--383.
+
+\bibitem[{Little et~al.(2007)Little, McSharry, Roberts, Costello \&
+  Moroz}]{little07}
+\textsc{Little, M.~A.}, \textsc{McSharry, P.~E.}, \textsc{Roberts, S.~J.},
+  \textsc{Costello, D. A.~E.} \& \textsc{Moroz, I.~M.} (2007).
+\newblock Exploiting nonlinear recurrence and fractal scaling properties for
+  voice disorder detection.
+\newblock \textit{Biomed. Eng. Online} , 6--23.
+
+\bibitem[{Lo(1984)}]{Lo1984}
+\textsc{Lo, A.} (1984).
+\newblock On a class of {B}ayesian nonparametric estimates: I. {D}ensity
+  estimates.
+\newblock \textit{Ann. Statist.} \textbf{12}, 351--357.
+
+\bibitem[{M{\o}ller et~al.(2006)M{\o}ller, Pettitt, Reeves \&
+  Berthelsen}]{Moller2006}
+\textsc{M{\o}ller, J.}, \textsc{Pettitt, A.~N.}, \textsc{Reeves, R.} \&
+  \textsc{Berthelsen, K.~K.} (2006).
+\newblock {An efficient Markov chain Monte Carlo method for distributions with
+  intractable normalising constants}.
+\newblock \textit{Biometrika} \textbf{93}, 451--458.
+
+\bibitem[{Murray et~al.(2010)Murray, Adams \& MacKay}]{murray2010}
+\textsc{Murray, I.}, \textsc{Adams, R.~P.} \& \textsc{MacKay, D.~J.} (2010).
+\newblock Elliptical slice sampling.
+\newblock \textit{J. Mach. Learn. Res. W\&CP} \textbf{9}, 541--548.
+
+\bibitem[{Murray et~al.(2006)Murray, Ghahramani \& MacKay}]{murray2006}
+\textsc{Murray, I.}, \textsc{Ghahramani, Z.} \& \textsc{MacKay, D. J.~C.}
+  (2006).
+\newblock {MCMC} for doubly-intractable distributions.
+\newblock In \textit{Proc. 22nd Conf. Uncert. Artif. Intell.} AUAI Press, pp.
+  359--366.
+
+\bibitem[{Neal(2010)}]{Neal2010}
+\textsc{Neal, R.~M.} (2010).
+\newblock {MCMC} using {Hamiltonian} dynamics.
+\newblock In \textit{Handbook of Markov Chain Monte Carlo}, S.~P. Brooks,
+  A.~Gelman, G.~L. Jones,  \& X.-L. Meng, eds. Chapman \& Hall/CRC Press, Boca
+  Raton, Florida, pp. 113--162.
+
+\bibitem[{Plummer et~al.(2006)Plummer, Best, Cowles \& Vines}]{Rcoda2006}
+\textsc{Plummer, M.}, \textsc{Best, N.}, \textsc{Cowles, K.} \& \textsc{Vines,
+  K.} (2006).
+\newblock {CODA}: Convergence diagnosis and output analysis for {MCMC}.
+\newblock \textit{R News} \textbf{6}, 7--11.
+
+\bibitem[{Robert \& Casella(2005)}]{Robert05}
+\textsc{Robert, C.~P.} \& \textsc{Casella, G.} (2005).
+\newblock \textit{Monte Carlo Statistical Methods}.
+\newblock Springer-Verlag, New York, Inc.
+
+\bibitem[{Walker(2011)}]{walker11}
+\textsc{Walker, S.~G.} (2011).
+\newblock Posterior sampling when the normalizing constant is unknown.
+\newblock \textit{Commun. Statist. Simulat.} \textbf{40}, 784--792.
+
+\bibitem[{Wood(1994)}]{wood1994}
+\textsc{Wood, A. T.~A.} (1994).
+\newblock {Simulation of the von Mises--Fisher distribution}.
+\newblock \textit{Commun. Statist. Simulat.} \textbf{23}, 157--164.
+
+\end{thebibliography}

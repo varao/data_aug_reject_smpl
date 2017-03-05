@@ -1,0 +1,147 @@
+
+
+In many situations, assuming the observations come from a particular parametric family is restrictive, and raises concerns about model misspecification. Nonparametric alternatives %, on the other hand,
+are  more flexible and have much wider applicability, and we consider these in this section. % and show their theoretical support.
+
+Denote by $\mathcal{M}$ the space all the densities on $V_{p,d}$ with respect to the Haar measure $\lambda$.  Let $g(X,G,\boldsymbol\kappa)$ be a parametric kernel on the Stiefel manifold
+with a `location parameter' $G$ and a vector of concentration parameters $\boldsymbol\kappa=\{\kappa_1,\ldots, \kappa_p\}$.   One can place a prior $\Pi$ on $\mathcal{M}$ by modelling the random density $f$ as
+\begin{equation}
+\label{eq-mixmodel1}
+f(X)=\int  g(X,  G, \boldsymbol\kappa) P(\dif \bkappa \dif G),
+\end{equation}
+with the mixing measure $P$ a random probability measure. A popular prior over $P$ is the Dirichlet process \citep{Fer1973}, %which we write as $DP_{\alpha P_0}$. Here,
+parametrized by a base probability measure $P_0$ on the product space $\mathbb R_{+}^p\times V_{p,d}$,  and a concentration parameter $\alpha>0$.
+We denote by $\Pi_1$ the DP prior on the space of mixing measures,
+% which induces a prior $\Pi$ on $\mathcal{M}$.
+and assume $P_0$ has full support on $\mathbb{R}_{+}^p\times V_{p,d}$.
+
+The  model in \eqref{eq-mixmodel1} is a `location-scale' mixture model, and corresponds to an infinite mixture model where each component has its
+own location and scale. One can also define the following `location' mixture model given by
+\begin{equation}
+\label{eq-mixmodel2}
+f(X)=\int  g(X,  G, \boldsymbol\kappa) P(\dif G)\mu(\dif \boldsymbol \kappa),
+\end{equation}
+where $P$ is given a nonparametric prior like the DP and $\mu(\dif \boldsymbol \kappa)$ is a parametric distribution %$\pi_{\boldsymbol{\kappa}}$
+(like the Gamma or Weibull distribution). In this model, all components are constrained to have the same scale parameters $\bkappa$.
+
+When $\Pi_1$ corresponds to a DP prior, one can precisely quantify the mean of the induced density $\Pi$.
+For model \eqref{eq-mixmodel1}, the  mean prior is given by
+\begin{align}
+E(f(X))&=\int  g(X,  G, \boldsymbol\kappa) E(P(\dif \bkappa \dif G)) =\int  g(X,  G, \boldsymbol\kappa) P_0(\dif \bkappa \dif G),
+\intertext{while for model \eqref{eq-mixmodel2}, this is}
+E(f(X))&=\int  g(X,  G, \boldsymbol\kappa)\mu(\dif \bkappa) P_0(\dif G).
+\end{align}
+The parameter $\alpha$ controls the concentration of the prior around the mean, and one can place a hyperprior on this as well.
+
+In the following, we set $g(X,G,\bkappa)$ to be the matrix Langevin distribution with parameter $F = G\bkappa$. Thus,
+%Given $H$  and $\boldsymbol\kappa$ we define  $d$ by $p$ matrix $F$  by letting $F_{[:k]}=\kappa_kH_{[:k]}$ for $k=1,\ldots, p$ where $F_{[:k]}$  denotes the $k$th column of $F$.
+%For our mixture model, we use the following mixing kernel which is a special case of the matrix Langevin distribution with orthogonal parameter $F$,
+\begin{equation}
+g(X,G,\boldsymbol\kappa)=\etr(\bkappa G^TX)/Z(\bkappa)=C(\bkappa)\etr(\bkappa G^TX),
+\end{equation}
+with $C(\bkappa)=1/Z(\bkappa)=1/ _{0}F_1(\frac{1}{2}d, \frac{1}{4}\bkappa^T\bkappa)$.
+%Since the normalization constant only depends on $\boldsymbol\kappa$. We will write $C(\boldsymbol\kappa)$ instead of $C(H,\boldsymbol\kappa)$ from now on. Note that our kernel  $g(X,  H, \boldsymbol\kappa)$.
+Note that we have restricted ourselves to the special case where the matrix Langevin parameter $F$ has orthogonal columns (or equivalently, where $H = I_p$). While it
+ is easy to apply our ideas to the general case, we demonstrate below that even with this restricted kernel, our nonparametric model has properties like
+large support and consistency.
+
+\subsection{Posterior consistency}
+%\vinayak{Is our theory for the case of DP or for general $\Pi_1$?. Should I change ``we show this has large support" etc. to ``we show *when* this has large support"?Lizhen: just for the DP, but what we wrote here should be fine.}
+With our choice of parametric kernel, a DP prior on $\Pi_1$ induces 
+%, induced by the DP prior  $\Pi_1$ on the mixing measure, 
+an infinite mixture of matrix Langevin distributions on $\mathcal{M}$. Call this distribution $\Pi$;
+below, we show that this has large support on $\mathcal{M}$, and
+that the resulting posterior distribution concentrates around  any true data generating density in $\mathcal{M}$. Our modelling framework and theory builds on \cite{abs1,abs2}, who developed consistency theorems for density estimation on compact Riemannian manifolds, and considered DP mixtures of kernels appropriate to the manifold under consideration.  However, they only considered simple manifolds, and showing that our proposed models have large support and consistency properties requires substantial new theory.
+
+We first introduce some notions of distance and  neighborhoods on  $\mathcal{M}$.
+A weak neighborhood  of $f_0$ with radius $\epsilon$ is defined as
+\begin{equation}
+\label{eq-weaknb}
+W_{\epsilon}(f_0)=\left\{f: \left|\int zf\lambda(\dif X)- zf_0\lambda(\dif X)\right|\leq \epsilon, \text{for all}\; z\in C_b(V_{p,d}) \right\},
+\end{equation}
+where $C_b(V_{p,d})$ is the space of all continuous and bounded functions on $V_{p,d}$.
+The  Hellinger  distance $d_H(f,f_0)$ is defined as
+\begin{eqnarray*}
+d_H(f,f_0) = \left(\dfrac{1}{2}\int (\sqrt{f(X)}-\sqrt{f_0(X)})^2\lambda(\dif X)\right)^{1/2}.
+\end{eqnarray*}
+ We let $U_{\epsilon}(f_0)$ denote  an $\epsilon$-Hellinger neighborhood around
+$f_0$ with respect to $d_H$.  The Kullback-Leibler (KL)  divergence between $f_0$ and $f$  is defined to be
+\begin{align}
+\label{eq-KLdivergence}
+d_{KL}(f_0,f)=\int  f_0(X) \log \dfrac{ f_0(X)}{f(X)}\lambda(\dif X),
+\end{align}
+with $K_{\epsilon}(f_0)$ denoting an $\epsilon$-KL neighborhood of $f_0$.
+
+Let $X_1,\ldots, X_n$ be $n$ observations drawn i.i.d.\ from some true density $f_0$ on $V_{p,d}$.
+ Under our model, the posterior probability $\Pi_{n}$ of some neighborhood  $W_\epsilon(f_0)$ is given by
+\begin{align}
+\label{eq-posteq}
+\Pi_{n}\left(W_\epsilon(f_0)|X_1,\ldots, X_n\right)&=\dfrac{\int_{W_\epsilon(f_0)} \prod_{i=1}^n f(X_i)\Pi(\dif f)}{\int_{\mathcal{M}} \prod_{i=1}^n f(X_i)\Pi(\dif f)}.
+%&=\dfrac{\int_{W_\epsilon(f_0)} \prod_{i=1}^n \frac{f(X_i)}{f_0(X_i)}\Pi(\dif f)}{\int_{\mathcal{M}} \prod_{i=1}^n \frac{f(X_i)}{f_0(X_i)}\Pi(\dif f)}.
+\end{align}
+ The posterior is  weakly consistent if for all $\epsilon>0$,  the following holds:
+\begin{equation}
+\Pi_{n}\left(W_\epsilon(f_0)|X_1,\ldots, X_n\right)\rightarrow 1 \;a.s. \;Pf_0^{\infty}\; \text{as}\; n\rightarrow \infty,
+\end{equation}
+where $Pf_0^{\infty}$ represents the true probability measure for $(X_1, X_2,\ldots)$.
+
+%\vinayak{Why not just $f_0^{\infty}$. PS: maybe be should also introduce the product
+%density $f^n_0$ in the paragraph before eq 34? Lizhen: because we really want to say with respect to the true probability instead of true density, therefore, i think $Pf_0^{\infty}$ is better. }.
+
+
+We assume the  true density $f_0$ is continuous with $F_0$  as its probability distribution. The following theorem is on the weak consistency of the posterior under the mixture prior for both models \eqref{eq-mixmodel1} and  \eqref{eq-mixmodel2}, the proof of which is included in the appendix.
+\begin{theorem}
+\label{th-weakConsistency}
+The posterior $\Pi_{n}$ in the DP-mixture of matrix Langevin distributions is weakly consistent. % with $P\sim DP_{\alpha P_0}$.
+\end{theorem}
+
+
+We now consider the consistency property of the posterior $\Pi_n$ with respect to the Hellinger neighborhood $U_{\epsilon}(f_0)$, this is referred as strong consistency.
+%
+% \vinayak{Does the general case follow, or is it harder or easier. Should I
+%include a comment saying we want to show that the restricted model has strong consistency? Lizhen: it is slightly harder to show the general case, but it can be done, it just involves a lot of messy details, we can't just verify the general conditions given in Bhattacharya and Dunson (2011) since they only consider the location model. We need to start with the very basics such as constructing the sieves  etc. It can be done, it is just not worth the lengthy proofs which are somewhat similar to the location mixture case}.
+%Let $\pi_{\boldsymbol{\kappa}}$ be the prior on $\boldsymbol\kappa=\{\kappa_1,\ldots, \kappa_p \}$.
+\begin{theorem}
+\label{th2}
+Let $\pi_{\boldsymbol{\kappa}}$ be the prior on $\boldsymbol\kappa$, and
+let $\Pi$ be the prior on $\mathcal{M}$ induced by $\Pi_1$ and $\pi_{\boldsymbol{\kappa}}$ via the mixture model \eqref{eq-mixmodel2}.
+Let $\Pi_1\sim DP_{\alpha P_0}$ with $P_0$ a base measure having full support on $V_{p,d}$.  Assume $\pi_{\boldsymbol{\kappa}}(\phi^{-1}(n^a,\infty))\leq \exp(-n\beta)$ for some $a<1/((p+2)dp)$ and $\beta>0$ with $\phi(\boldsymbol{\kappa})=\sqrt{\sum_{i=1}^p(\kappa_i+1)^2}$. Then the posterior $\Pi_{n}$ is consistent with respect to the Hellinger distance $d_H$.
+\end{theorem}
+
+
+\begin{remark}
+For prior $\pi_{\boldsymbol{\kappa}}$ on the concentration parameter $\boldsymbol{\kappa}$, to satisfy the condition
+%\begin{align*}
+$\pi_{\boldsymbol{\kappa}}\left( \phi^{-1}(n^a,\infty)  \right)<\exp(-n\beta)$,
+%\end{align*}
+for some $a<1/(dp(p+2))$ and $\beta>0$ requires fast decay of the tails for $\pi_{\boldsymbol{\kappa}}$. One can check that an independent Weibull prior for $\kappa_i$, $i=1,\ldots, p$ with 
+$\kappa_i\sim \kappa_i^{\left(1/a\right)-1}\exp(-b \kappa_i^{(1/a)})$ will satisfy the tail  condition.
+
+Another choice is to allow $\pi_{\boldsymbol{\kappa}}$ to be sample size dependent as suggested by \cite{abs2}. In this case, one can choose independent Gamma priors for 
+$\kappa_i$ with $\kappa_i\sim\kappa_i^{c}\exp(-b_n\kappa_i)$ where $c>0$ and $n^{1-a}/b_n\rightarrow 0$ with $0<a<1/(dp(p+2)).$
+\end{remark}
+
+\subsection{Inference for the nonparametric model}
+The auxiliary variable representation of equation \eqref{eq:rej_joint} makes is easy to construct MCMC samplers for the nonparametric model.
+%(though we also describe a scheme involving the exchange sampler in Appendix \ref{}
+%Sampling algorithms for the DP can broadly be classified into two kinds: marginal samplers (based on the Chinese restaurant process (CRP) representation %\citep{Pit2002a}.
+%of the DP) \citep{Nea2000}, and conditional samplers based on the stick-breaking representation \citep{IshJam2001}. 
+Here, we limit ourselves to samplers based on the Chinese restaurant process (CRP) representation of the DP \citep{Nea2000}, though Appendix \ref{sec:dp_smpl}
+discusses alternatives.
+
+The Chinese restaurant process describes the distribution over partitions of observations that results from integrating out the DP-distributed
+discrete random probability measure $\Pi$. A CRP-based sampler updates this partition by reassigning each observation to a cluster conditioned on the
+rest. The probablility of an observation $(X_i, \cY_i)$ joining a cluster with given parameters is proportional to
+the likelihood of equation \eqref{eq:rej_joint} and  the number of observations already at that cluster (for an empty cluster, the latter is the
+concentration parameter $\alpha$).
+The parameters of each cluster can be updated using the algorithms of Section \ref{sec:post_sim}.
+We provide details in Appendix \ref{sec:dp_smpl}, since these are standard for DP mixture models. We also describe an alternate
+exchange-sampler based approach to updating the partitions in the appendix.
+
+%joini, at any iteration, the state of the sampler
+%consists of a partitioning of the data (represented by an assignment of each observation to a latent component), and the parameters associated with each cluster.
+%Let $n$ be the number of observations, and let these be partitioned into $k$ clusters.
+%The cluster assignments of the observations are represented by an $n$-component vector $\mathbf{c}$, with $c_i$ taking values in $\{1,\cdots,k\}$.
+%The MCMC sampler proceeds by repeating two steps:
+
+

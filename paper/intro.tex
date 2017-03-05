@@ -1,0 +1,102 @@
+
+Rejection sampling %is a widely applicable technique 
+allows sampling from a probability density $p(x)$ by %. The idea is to 
+constructing an upper bound to $p(x)$,
+and accepting or rejecting samples from a density proportional to the bounding envelope. 
+%Each sample $x^*$ is either accepted or rejected, with the acceptance
+%probability equal to the original density $p(x^*)$ divided by the envelope evaluated at $x^*$. This division implies that 
+%even if $p(x)$ involves an intractable normalization constant, by choosing an appropriate bounding envelope, 
+%$p(x)$ need only be evaluated upto a constant of proportionality.
+The envelope is usually much simpler than $p(x)$, with the number of rejections %, and thus the algorithm's efficiency, 
+determined by how closely it matches the true density. 
+
+In typical applications, the probability density of interest is indexed by a parameter $\theta$, and we write it as $p(x\mid\theta)$. 
+A Bayesian analysis places a prior on $\theta$, and, given observations from the likelihood $p(x\mid\theta)$, studies the posterior over $\theta$. 
+An intractable likelihood, often with a normalization
+constant depending on $\theta$, precludes straightforward Markov chain Monte Carlo inference over $\theta$: calculating a Metropolis--Hastings acceptance probability
+involves evaluating the ratio of two such likelihoods, and is itself intractable. This class of problems is called doubly-intractable~\citep{murray2006},
+and existing approaches require the ability to draw exact samples
+from $p(x\mid\theta)$, or to obtain positive unbiased estimates of $p(x\mid\theta)$.
+
+We describe an approach that is applicable when $p(x\mid\theta)$ has an associated rejection sampling algorithm.
+Our idea is to instantiate the rejected proposals preceding each observation, resulting in an augmented state-space on which we run a Markov chain.
+Including the rejected proposals %as auxiliary variables 
+can eliminate any intractable terms, and allows the application of standard techniques \citep{adams_gpds}.
+We show that, conditioned on the observations, it is straightforward to independently sample the number and values of the rejected proposals:
+this just requires running the rejection sampler to generate as many acceptances as there are observations, with all rejected proposals kept.
+The ability to produce a conditionally independent draw of these variables is important when posterior updates of some parameters are intractable
+while others are simple. In such a situation, we introduce the rejected variables only when we need 
+to carry out the intractable updates, after which we discard them and carry out the simpler updates.
+
+A particular application of our algorithm is parameter inference for probability distributions truncated
+to sets like the positive orthant, the simplex, or the unit sphere.
+Such distributions correspond to sampling proposals from the untruncated distribution and rejecting those outside the domain of interest. 
+We consider an application from flow cytometry where this representation is the actual data collection process.
+Truncated distributions also arise in applications like measured time-to-infection \citep{Goeth09}, where times larger than a year are truncated,
+mortality data \citep{Alai2013}, annuity valuation for truncated lifetimes  \citep{Alai2013}, and
+stock price changes \citep{aban06}. One approach for such problems was proposed in \cite{leich09}, though their algorithm samples from an
+approximation to the posterior distribution of interest. Our algorithm provides a simple and general way to apply the machinery of Bayesian inference 
+to such problems.
+
+
+\begin{comment}
+Matrices with orthonormal columns play an important role in statistics, signal processing and machine learning, with applications ranging from studies of
+orientations of orbits of comets and asteroids to
+principal components analysis to the estimation of rotation matrices.  Central to probabilistic models involving such matrices %with orthonormal columns
+are probability distributions on the Stiefel manifold,  the space of all $d \times p$ orthonormal matrices.
+%-frames in $\mathbb{R}^d$, Each $p$-frame is an ordered collection of $p$ orthonormal vectors, and we write the Stiefel manifold as $V_{p,d}$.
+Popular examples of parametric distributions on the Stiefel manifold are the matrix  von Mises-Fisher distribution \citep{khatri1977, hornik2013}
+(also known as the matrix Langevin \citep{chikuse1993,chikuse2003,chikuse2006}), and its
+generalization, the Bingham-von Mises-Fisher distribution \citep{hoff2009}.  Bayesian inference for such distributions is  difficult due to the intractable
+normalization constants in the likelihood function (such problems are called \emph{doubly intractable} \citep{murray2006}).
+%While \cite{hoff2009jrssb} recently proposed  a first order approximation algorithm,
+%for the generalized Bingham distribution (used as a prior on the principle components of the covariance matrix), but
+%and there is no work on exact posterior sampling for them.
+
+ One of our  first contributions is to develop an exact MCMC sampling algorithm for the parametric matrix Langevin distribution.
+Our sampler is based on a representation of the matrix Langevin distribution provided in \cite{hoff2009}, involving a rejection sampling
+scheme. Related ideas that exist in the literature (e.g.\ \cite{adams_gpds}) do not exploit a  simple independence property of the rejected
+variables in a rejection sampler, and are unnecessarily complicated. Directly applying the sampler of \cite{adams_gpds} to
+our problem destroys certain conjugacy properties, and can lead to significant inefficiency.
+
+By mixing the parametric kernel with a random probability measure, we extend our model to a class of flexible nonparametric models.
+Nonparametric inference on the Stiefel manifold has been limited to the estimation of Fr\'echet means (\cite{rabibook}).
+Model-based nonparametric inference has advantages, allowing the flexible accommodation of prior beliefs, and allowing inferences to adapt to the
+complexity of the data.  We show that our
+nonparametric models have large support, and that the resulting posterior distributions are consistent.  We generalize our proposed
+MCMC sampling algorithms to these nonparametric extensions as well.
+
+Overall, our work develops theory and algorithms for parametric and nonparametric Bayesian inference on the Stiefel manifold, both of which are
+very underdeveloped.  Depending on the application, our models can be used to characterize the data directly, or to describe latent components of a hierarchical
+model.  Section \ref{sec:geom}  provides some details on the geometry of the Stiefel manifold. Section \ref{sec:Bays_inf} introduces the matrix Langevin distribution,
+and takes a Bayesian approach to estimating its parameters. In Section \ref{sec:post_sim}, we describe the doubly-intractable nature of the problem, and develop a novel MCMC sampler for
+posterior inference, which we evaluate on a number of datasets in Section \ref{sec:Bayes_expt}.
+Section \ref{sec:NPbayes} introduces a nonparametric extension of the matrix Langevin distribution, and is devoted to studying the theoretical support
+and asymptotic properties. We finish with more experiments in Section \ref{sec:np_expt}.
+%In Section 7, we illustrate the model and posterior inference  using simulated data and two real data examples.
+
+
+
+
+\section{ Geometry of the Stiefel manifold}  \label{sec:geom}
+The Stiefel manifold $V_{p,d}$ is the space of all $p$-frames in $\mathbb{R}^d$, with a $p$-frame consisting of $p$ ordered orthonormal vectors in $\mathbb{R}^d$.
+Writing $M(d,p)$ for the space of all $d \times p$ real matrices, and letting $I_p$ represent the $p \times p$  identity matrix, the Stiefel manifold can be
+represented as
+\begin{equation}
+V_{p,d}=\{X\in M(d,p): X^TX=I_p\}.
+\end{equation}
+The Stiefel manifold $V_{p, d}$ has the $d-1$ hypersphere $S^{d-1}$ as a special case when $p=1$. When $p=d$, this is the space of all the orthogonal matrices
+$O(d)$.
+$V_{p,d}$  is a Riemannian manifold of dimension $dp-p-p(p-1)/2=p(2d-p-1)/2$. It can be embedded  into the Euclidean space $M(d,p)$ of dimension $dp$ with  the inclusion map as a natural embedding, and is thus a submanifold of $\mathbb R^{dp}$.
+
+Let $G\in V_{p,d}$, and  $G_1$ be a matrix of size $d\times (d-p)$ such that $[G: G_1]$ is in $O(d)$, the group of $d$ by $d$ orthogonal matrices.
+The volume form on the manifold is $\lambda(\dif G)=\wedge_{i=1}^p\wedge_{j=i+1}^{d}g_j^T\dif g_i$ where $g_1,\ldots,g_p$ are the columns of
+$G$, $g_{p+1},\ldots, g_d$ are the columns of $G_1$ and $\wedge$ represents the wedge product \citep{muir2005}.  If $p=d$, that is when $G\in O(d)$,
+one can represent $\lambda(\dif G)=\wedge_{i<j}g_j^T\dif g_i$. Note that $\lambda(\dif G)$ is invariant under the left action of the orthogonal group $O(d)$ and
+the right action of the orthogonal group $O(p)$, and forms the Haar measure on the Stiefel manifold.
+For more details on the Riemannian structure of the Stiefel
+manifold, we refer to \cite{Edelman98thegeometry}.
+%Let $S$ be some measurable set on the Stiefel manifold, one can define the  measure $\lambda$ as  $\lambda(S)=\int_S v(\dif X)$.
+
+
+\end{comment}

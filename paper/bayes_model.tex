@@ -1,0 +1,182 @@
+
+\subsection{The matrix Langevin distribution on the Stiefel manifold} \label{sec:stief_intr}
+The Stiefel manifold $V_{p,d}$ is the space of all $d \times p$ orthonormal matrices, %(i.e.\ all $p$-frames in $\mathbb{R}^d$).
+that is, $d \times p$ matrices $X$ such that $X^TX=I_p$, where $I_p$ is the $p \times p$  identity matrix.
+%\begin{equation}
+%V_{p,d}=\{X\in M(d,p): X^TX=I_p\}. \nonumber
+%\end{equation}
+When $p=1$, this is the $d-1$ hypersphere $S^{d-1}$, and when $p=d$, this is the space of all orthonormal matrices
+$O(d)$.
+Probability distributions on the Stiefel manifold play an important role in statistics, signal processing and machine learning, with applications ranging 
+from studies of orientations of orbits of comets and asteroids to principal components analysis to the estimation of rotation matrices.  
+%\subsection{The matrix Langevin distribution}  \label{sec:param}
+The simplest such distribution is the matrix Langevin distribution,
+%A random variable $X \in V_{p,d}$ distributed according to this 
+an exponential-family distribution whose density with respect to the invariant Haar
+volume measure~\citep{Edelman98thegeometry} is
+%\begin{equation}
+%\label{eq-paraML}
+$\ml(X\mid F)=\etr(F^TX)/Z(F)$. %  \qquad  X \in V_{p,d}.$ %\nonumber
+%\end{equation}
+Here $\etr$ is the exponential-trace, and $F$ is a $d\times p$ matrix. The normalization constant $Z(F)=\mathstrut_0F_1(d/2, F^TF/4)$  is the hypergeometric
+function  with matrix arguments, evaluated at $F^TF/4$~\citep{chikusebook}.
+Let $F = G \bkappa H^T$ be the singular value decomposition of $F$, where $G$ and $H$ are $d \times p$ and $p \times p$ orthonormal matrices, and $\bkappa$ is
+a positive diagonal matrix. 
+We parametrize $\ml$ by $(G, \bkappa, H)$, and one can think of $G$ and $H$ as orientations, with $\bkappa$ controlling the
+concentration in directions determined by these orientations.
+%Since $F^TF = \bkappa \bkappa$, the normalization constant depends only on $\bkappa$,
+Large values of $\bkappa$ imply concentration along the associated directions, while setting $\bkappa$ to zero gives the uniform distribution on
+the Stiefel manifold. It can be shown~\citep{khatri1977} that $\mathstrut_0F_1(d/2, F^TF/4) =  \mathstrut_0F_1(d/2, \bkappa^T\bkappa/4)$, so that
+this depends only on $\bkappa$. We write it as $Z(\bkappa$).
+%with inferences carried out based on the resulting posterior. 
+In our Bayesian analysis, we place independent priors on 
+$\bkappa, G$ and $H$.
+The last two lie on the Stiefel manifolds $V_{p,d}$ and $V_{p,p}$, and we place matrix Langevin priors $\ml(\cdot\mid F_0)$ and $\ml(\cdot\mid F_1)$ on 
+these: we will see below that these are conditionally conjugate. %resulting in simple posterior update rules for these matrices.
+We place independent {Gamma} priors on the diagonal elements of $\bkappa$. %writing $\kappa_i$ for element $(i,i)$ of $\bkappa$.
+%  X_i      &\sim {\ml}(X_i|G\bkappa H^T)& \quad \text{for $i = 1,\ldots, n$.   \nonumber }
+However, the difficulty in evaluating the normalization constant $Z(\bkappa)$ 
+makes posterior inference for $\bkappa$ doubly intractable.  Thus, in a 2006 University of Iowa PhD thesis, Camano-Garcia %\cite{camanothesis} 
+keeps $\bkappa$ constant, while~\cite{hoff2009jrssb} uses a first-order Taylor expansion of the intractable term to run an approximate sampling algorithm.
+Below, we show how fully Bayesian inference can be carried out for this quantity as well.
+
+\subsection{A rejection  sampling algorithm} \label{sec:prior_sim}
+We first describe a rejection sampling algorithm from~\cite{hoff2009} to sample from $\ml$.
+%For parameterizations other than the uniform distribution (i.e.\ for $\bkappa > 0$), even this is non-trivial.
+For simplicity, assume $H$ is the identity matrix. In the general case, we simply rotate  the resulting draw 
+by $H$, since if $X \sim \ml(\cdot\mid F)$, then $XH \sim \ml(\cdot\mid FH^T)$.
+At a high level, the algorithm sequentially proposes vectors
+from the matrix Langevin on the unit sphere: this is also called the von Mises--Fisher distribution and is easy to simulate~\citep{wood1994}.
+The mean of the $r${th} vector is column $r$ of $G$, $G_{[:r]}$, projected onto the nullspace of the earlier vectors, $N_r$.
+This sampled vector is then projected back onto $N_r$ and normalized, and %giving a unit vector orthogonal to the earlier $r-1$ vectors.
+the process is repeated $p$ times. Call the resulting
+distribution $\seq$; for more details, see Algorithm \ref{alg:rej_smplr} and~\cite{hoff2009}.
+{
+\vspace{.1in}
+\begin{algo}{Proposal $\seq(\cdot\mid G, \bkappa)$ for the matrix Langevin distribution~\citep{hoff2009}}\label{alg:rej_smplr}
+  \begin{itemize}
+    \item[]
+\begin{tabular}{p{.9cm}p{12.2cm}}
+%\hline
+{Input:}  & Parameters $G,\bkappa$; write $G_{[:i]}$ for column $i$ of $G$, and $\kappa_i$ for element $(i,i)$ of $\bkappa$. \\
+{Output:} & An output  $X \in V_{p,d}$; write $X_{[:i]}$ for column $i$ of $X$. \\
+\end{tabular}
+\begin{tabbing}
+  \enspace Sample $X_{[:1]} \sim \ml(\cdot\mid \kappa_1 G_{[:1]})$. \\
+  \enspace For $r \in \{2,\cdots p\}$\\
+    \qquad Construct $N_r$, an orthogonal basis for the nullspace of $\{X_{[:1]},\cdots X_{[:r-1]} \}$.\\
+    \qquad Sample $z \sim \ml(\cdot\mid \kappa_r N^T_r G_{[:r]})$. \\
+    \qquad Set $X_{[:r]} = z^T N_r/ \|z^T N_r\|. $
+\end{tabbing}
+  \end{itemize}
+\end{algo}
+}
+Letting $I_k(\cdot)$ be the modified Bessel function of the first kind,
+$\seq$ is a density on the Stiefel manifold with
+\begin{align}
+  \seq(X\mid G, \bkappa) &= \left\{\prod_{r=1}^p \frac{ \|\kappa_r N^T_r G_{[:r]}/2 \|^{(d-r-1)/2 }}{ \Gamma(\frac{d-r+1}{2} ) I_{(d-r-1)/2}(\| \kappa_r N^T_r G_{[:r]} \|)} \right\} \etr(\bkappa G^T X).
+  %\nonumber \\ %\label{eq:hoff_seq}\\
+%               &:= \etr(\bkappa G^T X)/D(X, \bkappa, G) \nonumber
+\end{align}
+{Write $D(X, \bkappa, G)$ for the reciprocal of the term in braces. Since
+$I_k(x)/x^k$ is an increasing function of $x$, and  $\|N^T_r G_{[:r]}\| \le \|G_{[:r]}\| = 1$, we have the following bound $D(\bkappa)$ for $D(X, \bkappa, G)$:}
+\begin{align}
+ D(X,\bkappa, G) &\le \prod_{r=1}^p  \frac{ \Gamma(\frac{d-r+1}{2} ) I_{(d-r-1)/2}(\| \kappa_r \|)}{ \|\kappa_r/2 \|^{(d-r-1)/2 }} = D(\bkappa).\qquad \qquad \qquad \nonumber
+\end{align}
+This implies that $\etr(\bkappa G^T X) \le D(\bkappa) \seq(X\mid G,\bkappa) $, allowing
+the following rejection sampler: sample $X$ from $\seq(\cdot)$, and accept with probability
+$D(X, \bkappa, G)/D(\bkappa)$. The accepted proposals come from $\ml(\cdot\mid G,\bkappa)$, and for samples from $\ml(\cdot\mid G,\bkappa,H)$,
+post multiply these by $H$.
+\begin{comment}
+While this approach to sampling from the prior is typically adequate, we obtain a different upper envelope to the Matrix Langevin distribution using results
+from~\citep{Luke1972}.  In that work, two bounds were provided, both ideal for our purposes:
+\begin{align}
+  \frac{\Gamma(\nu+1)I_{\nu}(x)}{(x/2)^{\nu}} &\le e^x \left( \frac{1}{2\nu + 3} + \frac{2(\nu+1)}{2\nu+3}\left[1 + \frac{2\nu+3)x}{2(\nu+1)}\right]^{-1} \right)\quad x\ge0,\ \nu \ge -1/2,\\
+  \frac{\Gamma(\nu+1)I_{\nu}(x)}{(x/2)^{\nu}} &\le \cosh(x) \quad x\ge0,\ \nu \ge -1/2
+\end{align}
+While, the latter is a bit more convenient, the former is tighter, and we shall use it in the following (referring to it as $b_{\nu}(x)$). For equation \eqref{eq:hoff_seq},
+we have the following bound $B(X)$ on $K(X)$:
+\begin{align}
+ K(X) \le \prod_{r=1}^p  b_{d-r-1}(N^T_r F_{[,r]}) := B(X)
+\end{align}
+Now, a proposal from $\seq$ is acccepted with probability $K(X)/B(X)$.
+By allowing the bound to depend on $X$, we can control the discrepancy between $B(X)$ and $K(X)$ resulting in fewer rejected samples, and greater efficiency.
+Note though that our bound $B(X)$ is not uniformly tighter that the bound $B_u$ of~\citep{hoff2009}; in particular at the point $X = H$ on the Stiefel manifold,
+$B(X) > K(X) = B_u$. On the other hand, our bound has the property that $\inf_{X \in V_{p,d}} K(X)/B(X) > \inf_{X \in V_{p,d}} K(X)/B_u$. This latter property will
+be crucial for efficient posterior sampling. Of course, one can always combine the two bounds, defining $\hat{B}(X) = \min (B_u, B(X))$.
+%is useful in its own right, providing a more efficient way to sample from the Matrix Langevin. Additionally, our approach will prove crucial for one of our
+%algorithms for posterior sampling; with the bound of \cite{hoff2009} being too loose to be practical.
+\end{comment}
+
+\subsection{Posterior sampling}   \label{sec:post_sim}
+
+Given a set of $n$ observations $\{X_i\}$, and writing $S = \sum_{i=1}^n X_i$, we have: 
+\begin{align}
+  p(G, \bkappa, H \mid X_i\}) & \propto {\etr(H \bkappa G^T S)p(H) p(G) p(\bkappa)}/{Z(\bkappa)^{n}}. \nonumber
+\end{align}
+
+
+%Recall that the normalization constant is rotation invariant (and thus independent of $H$).
+At a high level, our approach is a Gibbs sampler that sequentially updates $H, G$ and $\bkappa$. %As described below, 
+The pair of matrices $(H,G)$ correspond to the tractable $\theta_1$ in Algorithm~\ref{alg:rej_post}, while $\bkappa$ corresponds to $\theta_2$.
+Updating the first two is straightforward, while the third requires our augmentation scheme. \\
+\hspace{.1in}\\
+\noindent {1. Updating $G$ and $H$:} \label{sec:update_conj} 
+%The posterior distribution of $H$ is given by
+%\begin{align}
+%  p(H\mid X_i\},\bkappa, G) &= p(H\mid S, \bkappa, G) \propto \etr(H\bkappa G^T S)p(H).
+{With a matrix Langevin prior on $H$, the posterior is }
+\begin{align}
+  p(H\mid X_i,\bkappa, G) & \propto \etr\left\{(S^T G \bkappa + F_0)^T H\right\}. \nonumber
+\end{align}
+This is just the matrix Langevin distribution over rotation matrices, and one can sample from this following Section \ref{sec:prior_sim}.
+From here onwards, we will rotate the observations by $H$, allowing us to ignore this term. Redefining $S$ as $SH$, the posterior over $G$ is also
+matrix Langevin,
+%the conditional posterior of $G$ is given by:
+\begin{align}
+  p(G\mid X_i\},\bkappa) & \propto \etr\left\{(S \bkappa + F_1)^T G\right\}. \nonumber
+\end{align}
+
+\noindent {2. Updating $\bkappa$:} 
+%By itself, this step intractable, since it involves
+%evaluating the normalization constant $Z(\bkappa)$. % a hypergeometric function of matrix argument. % is intractable.
+Here, we exploit the rejection sampler scheme of the previous section, %any observation on the Stiefel manifold is preceded by a set (possibly of size zero)
+and instantiate the rejected proposals using Algorithm \ref{alg:rej_sim}. 
+%A simple idea is to first conditionally sample this set of rejected proposals, and \emph{then} propose
+%Let $\cY = \{Y_1,\cdots, Y_r\}$  be the sequence of $r \ge 0$ rejected proposals preceding an observation.
+From Section \ref{sec:prior_sim}, the joint probability is %of the entire set is %of accepted and rejected proposals is
+\begin{align}
+  p(\{X_i, \cY_i\}\mid G,\bkappa)    %&  = \left( \prod_{i=1}^{|\cY|}\frac{\etr(\bkappa G^TY_i)}{D(Y_i, G, \bkappa)} \left(1 - \frac{D(Y_i, G, \bkappa)}{D(\bkappa)} \right) \right)
+               %\frac{\etr(\bkappa G^TX)}{D(X, G, \bkappa)}\frac{D({X}, G, \bkappa)}{D(\bkappa)} \nonumber \\
+%        &= \left( \prod_{i=1}^{|\cY|}\frac{\etr(\bkappa G^TY_i)}{D(Y_i, G, \bkappa)} \left(1 - \frac{D(Y_i, G, \bkappa)}{D(\bkappa)} \right) \right)
+%              \frac{\etr(\bkappa G^T{X})}{D(\bkappa)}  \\
+         &= \frac{ \etr\left\{\bkappa G^T\left(S+\sum_{j=1}^{|\cY_i|}  Y_{ij}\right ) \right\} }{D(\bkappa)^{1+|\cY|}}
+             \prod_{i=1}^n   \prod_{j=1}^{|\cY|} \frac{ \left\{D(\bkappa) -  D(Y_{ij}, G, \bkappa)\right\}}{D(Y_{ij}, G, \bkappa)}.  \label{eq:rej_joint1}
+\end{align}
+All terms in equation~\eqref{eq:rej_joint1} can be evaluated easily, allowing %us to calculate the acceptance probability of 
+a simple Metropolis--Hastings algorithm in this augmented space.
+%
+In fact, we can calculate gradients to run a Hamiltonian Monte Carlo algorithm~\citep{Neal2010} 
+that makes significantly more efficient proposals than a random-walk sampling algorithm. %We demonstrate this below.
+In particular,
+%Given $n$ observations $X_1,\cdots,X_n$ with latent variable sets $\cY_1, \cdots, \cY_n$, 
+let $N = n + \sum_{i=1}^n |\mathcal{Y}_i|$, and
+$S = \sum_{i=1}^n(X_i + \sum_{j=1}^{|\mathcal{Y}_i|} Y_{ij})$. The log joint probability $L \equiv \log\left\{p(\{X_i,\cY_i\})\right\}$ is
+\begin{align}
+ L &= \text{trace}(G^T \bkappa S) +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left[ \log \left\{D(\bkappa) - D(Y_{ij}, \bkappa) \right\}\right. 
+                        - \left. \log D(Y_{ij}, \bkappa)\right] - n \log\left\{D(\bkappa)\right. \nonumber
+%\left(\sum_{i=1}^n X_i + \sum_{j=1}^{|\cY_i|}Y_{i,j} \right)
+\end{align}
+%Writing $D(Y, \bkappa) =
+% \left\{C\prod_{r=1}^p \frac{ I_{(d-r-1)/2}(\| \kappa_r N^T_r G_r \|)}{ \|\kappa_r N^T_r G_r \|^{(d-r-1)/2 }} \right\}$ as $C\tD(Y, \bkappa) $, 
+In Appendix \ref{sec:gradient}, we give an expression for the gradient of this log-likelihood. % shows that %and that $\frac{\dif }{\dif x}(x^{-m} I_m(x)) = x^{-m}I_{m+1}(x)$, we have
+%
+We use this to construct a Hamiltonian Monte Carlo sampler~\citep{Neal2010} for $\bkappa$. %that explores $\bkappa$-space.
+Here, it suffices to note that a proposal involves taking $L$ 
+leapfrog steps of size $\epsilon$ along the gradient, and accepting the resulting state with probability proportional to the product of equation
+\eqref{eq:rej_joint1}, and a simple Gaussian momentum term. The acceptance probability depends on how well the
+$\epsilon$-discretization approximates the continuous dynamics of the system, and choosing a small $\epsilon$ and a large $L$ can give global moves with high
+acceptance probability. A large $L$ however costs a large number of gradient evaluations. We study this trade-off
+in Section \ref{sec:Bayes_expt}. %, before performing a Bayesian analysis of  some problems with the Matrix Langevin distribution.
+%I_d(z)/z^d$, and $D'(z) = I_{d+1}(z)/z^{d+1}$
+

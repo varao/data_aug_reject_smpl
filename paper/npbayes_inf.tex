@@ -1,0 +1,69 @@
+\subsection{Inference for the nonparametric model:}
+Extending our ideas from Section \ref{sec:post_sim} to the nonparametric case involves adapting existing DP sampling techniques to
+doubly-intractable mixture components.
+MCMC sampling algorithms for the DP can broadly be classified into two kinds: marginal samplers (based on the Chinese restaurant process (CRP) representation %\citep{Pit2002a}. 
+of the DP) \citep{Nea2000}, and conditional samplers based on the stick-breaking representation \citep{IshJam2001}. Here, we focus on the former, although it should be clear how
+similar ideas apply to the latter.
+
+The Chinese restaurant process describes the distribution over partitions of observations that results from integrating out the DP-distributed 
+discrete random probability measure $\Pi$.
+For a CRP-based sampler, at any iteration, the state of the sampler
+consists of a partitioning of the data (represented by an assignment of each observation to a latent component), and the parameters associated with each cluster.
+Let $n$ be the number of observations, and let these be partitioned into $k$ clusters.
+The cluster assignments of the observations are represented by an $n$-component vector $\mathbf{c}$, with $c_i$ taking values in $\{1,\cdots,k\}$.
+The MCMC sampler proceeds by repeating two steps:
+
+\subsubsection{Update the cluster assignments of the observations}
+  We perform this step by sweeping through the observations, conditionally updating the cluster assignment of each observation based on the CRP sampling rule.
+In particular, from the exchangeability of observations, we treat the current observation as the last one, so that {\em a priori}, its probability of joining cluster $c$ (resp. a
+new cluster) is proportional to $n_c$ (resp. $\alpha$). Here $n_c$ is the number of observations associated with cluster $c$, and $\alpha$ is the DP concentration
+parameter. Letting cluster $c$ have parameters $(G^*_c, \bkappa^*_c)$, the likelihood for observation $X_i$ is $\etr(X_i^T F^*_c)/Z(F^*_c)$. Thus,
+we have for observation $i$:
+  \begin{align}
+    P(c_i = c  |\cdot) & \propto n_c \etr(X_i^T F^*_c)/Z(F^*_c) \qquad c \le k \label{eq:old_cl}\\
+    P(c_i = k+1|\cdot) & \propto \alpha \int_{V_{p,d}} \frac{\etr(X_i^T F^*)}{Z(F^*)} P(F^*) \lambda(\dif G^*) \dif\bkappa^*. \label{eq:new_cl}
+  \end{align}
+Implementing this requires overcoming two problems. One is that the lack of conjugacy make the integral in equation \eqref{eq:new_cl} intractable. A standard approach
+(Algorithm $8$ in \cite{Neal2010}) is to first assign the new cluster a parameter drawn from the prior, and then assign observation $i$ to a cluster. By instantiating
+the parameter associated with the new cluster, we avoid having to solve the integral of equation \eqref{eq:new_cl}. To improve this proposal, one can consider $\zeta$ 
+candidate new clusters (for some integer $\zeta \ge 1$), 
+assigning each
+a parameter drawn from the prior. Now, the probability of joining a new cluster $z \in \{1,\cdots\zeta\}$ is given by  $\frac{\alpha}{\zeta} \etr(X_i^T F^*_z)/Z(F^*_z)$.
+For more details, we refer to \cite{Neal2010}.
+
+ The second issue is more unique to our problem, and concerns the fact that even given the cluster parameters, the probability of assignment involves 
+the normalization constant $Z(F^*) = Z(\bkappa^*)$ (see equation \eqref{eq:old_cl}). For the location mixture model, where all clusters have the same scale parameter
+$\bkappa$, this is a common multiplicative factor, and is thus not an issue. For the general location-scale mixture, we can deal with this using similar
+auxiliary variable schemes as before. % generate a set of auxiliary observations  $\{Y_c\}$ for all clusters. Now,
+
+A first approach follows the exchange sampler, proposing to move an observation $i$ from its current cluster $c_{o}$ to a random new cluster $c_{n}$
+(chosen by some prespecified proposal distribution). 
+This move is then accepted using unbiased estimates of the probabilities in equations \eqref{eq:old_cl} and \eqref{eq:new_cl}.
+In particular, we generate a new observation $\hat{X}$ with parameter $F^*_{c_n}$, and simultaneously propose moving this from
+$c_n$ to $c_o$. The acceptance probability is then given by
+\begin{align}
+ p_{acc} = \frac{n_{c_n} \etr(X_i^T F^*_{c_n}) \etr(\hat{X}^T F^*_{c_o})} {n_{c_o} \etr(X_i^T F^*_{c_o}) \etr(\hat{X}^T F^*_{c_n})}.
+\end{align}
+
+%A second option is to generate auxiliary observations $\hat{X}_c$ for all clusters (including the empty, new clusters).
+%Letting $\mathcal{C}$ index these clusters, the joint distribution is
+%\begin{align}
+%  P(X_i, \hat{X}_{\mathcal{C}}) & = \frac{n_{c_o}^{\neg i}}{\alpha + n-1} \frac{\etr(X_i^T F_{c_o})}{Z(F_{c_o})} \prod_{c \in \mathcal{C}} \frac{\etr(\hat{X}_c^T F_c)}{Z(F_c)}
+%\end{align}
+%We can now Gibbs assign $X_i$ to a new cluster $c_n \in \mathcal{C} \cup c_o$, simultaneously assigning $\hat{X}_{c_n}$ to $c_o$. The probability is given by:
+%\begin{align}
+% P(c_i = c| others) \propto n_c^{\neg i}\etr(X_i^T F_{c}) \etr(\hat{X}_c^T F_{c_o})
+%\end{align}
+%%iseachthat the probabilitwith the step above to update cluster parameters.
+While it is possible to follow and improve this approach, a conceptually much simpler approach builds on the latent variable representation of 
+Section \ref{sec:latent_hist}. Recall that the joint distribution of an observation along with the rejected proposals of the rejection sampling algorithm
+is tractable ($P(X_i \cup \mathcal{Y}_i|\bkappa, G)$ in equation \eqref{eq:rej_joint}). Thus, by instantiating these variables, we can calculate the cluster assignment probability as
+  \begin{align}
+    P(c_i = c  |\cdot) & \propto n_c P(X_i,\cY_i| F^*_c) \qquad c \le k \label{eq:old_cl1}\\
+    P(c_i = k+1|\cdot) & \propto \alpha \int_{V_{p,d}} P(X_i,\cY_i| F^*_c)\lambda(\dif G^*) \dif\bkappa^*. \label{eq:new_cl1}
+  \end{align}
+To avoid evaluating the integral in the second equation, once again, we use Algorithm 8 from \cite{Neal2010}. We have thus reduced the original problem
+to the standard problem of MCMC sampling for DP mixture models with nonconjugate base measures.
+\subsubsection{Update the cluster parameters}
+  We update the parameters associated with each cluster using parametric sampling ideas from section \ref{sec:Bays_inf}. For our experiments, we used the Hamiltonian Monte Carlo
+sampler, cycling through each cluster and updating its parameters.

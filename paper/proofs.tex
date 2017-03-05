@@ -1,0 +1,53 @@
+
+% \begin{proof}[of Proposition \ref{prop:rej_post}]
+
+% The probability density of an accepted sample $x$ is
+% $p(x\mid \theta) = {f(x,\theta)}/{Z(\theta)}$.
+% {Independently introduce the set $(\cY, \hat{x})$ by running the rejection sampler until acceptance, so that}
+% \begin{align}
+%   p(x, \cY, \hat{x}\mid \theta) &=\frac{f(x,\theta)}{Z(\theta)}
+%                      \left[ \frac{f(\hat{x}, \theta)}{M} \prod_{i=1}^{|\mathcal{Y}|}  \left\{q(y_i\mid \theta) - \frac{f(y_i, \theta)}{M}\right\} \right]  \nonumber \\
+%             &=\frac{f(\hat{x},\theta)}{Z(\theta)}
+%                      \left[\frac{f({x}, \theta)}{M} \prod_{i=1}^{|\mathcal{Y}|}  \left\{(q(y_i\mid \theta) - \frac{f(y_i, \theta)}{M}\right\} \right]. \nonumber
+% \end{align}
+% {Marginalizing out $\hat{x}$, we have $
+%   p(\cY, x) =  \frac{f(x, \theta)}{M} \prod_{i=1}^{|\mathcal{Y}|}  \left\{q(y_i\mid \theta) - \frac{f(y_i, \theta)}{M} \right\}$}.\\ %\nonumber
+% From equation \eqref{eq:rej_jnt}, we see this is the desired joint distribution, proving our scheme is correct.
+% \end{proof}
+
+\begin{proof}[of Proposition~\ref{prop:rej_post}]
+  Rejection sampling first proposes from $q(x|\theta)$, and then accepts with probability $f(x,\theta)/\{Mq(x|\theta)\}$. %or rejects them.
+  Conceptually, one can first decide whether to accept or reject, and then conditionally sample the location.
+  The marginal acceptance probability is $Z(\theta)/M$, the area under $f(\cdot,\theta)$ divided by that under $M q(\cdot\mid\theta)$.
+  An accepted sample $x$ is distributed as the target distribution $f(x, \theta)/Z(\theta)$, while rejected samples are distributed as 
+  $\left\{{Mq(x\mid\theta) - f(x,\theta)}\right\}/\left\{M-Z(\theta)\right\}$. This two-component mixture is just the proposal $q(x)$.
+  While this mixture representation loses the computational benefits of the original algorithm, it shows that the location of an accepted sample is independent
+  of the past, and consequently, that the number and locations of rejected samples preceding an accepted sample is independent of the location
+  of that sample. Thus, one can use the rejected samples preceding any other accepted sample.
+\end{proof}
+
+
+
+
+\begin{proof}[of Theorem~\ref{thrm:conv_rate}]
+It follows from Bayes' rule and the assumed bounds that for an observation $X$,
+    $$p(\theta\mid X,\cY) \ge p(\theta\mid X) \frac{b_f}{B_f} \left(\frac{b_qr}{B_q}\right)^{|\cY|}.$$
+ Let the number of observations $|X|$ be $n$. Then,
+\begin{align}
+  k(\htheta\mid \theta) &= \int_{\bU^n} p(\htheta\mid \cY,X) p(\cY\mid \theta,X) \mathrm{d}\cY \nonumber \\
+  & \ge  \left(\frac{b_f}{B_f}\right)^n p(\htheta\mid X) \prod_{i=1}^n \int_{\bU} \beta^{|\cY_i|} p(\cY_i\mid \theta,X)  \mathrm{d}\cY_i \nonumber \\
+    & =  \left(\frac{b_f}{B_f}\right)^n p(\htheta\mid X) \prod_{i=1}^n \int_{\bU} \beta^{|\cY_i|}  \frac{Z(\theta)}{M}  \prod_{j=1}^{|\cY_i|}  \left\{q(y_{ji}\mid \theta) - \frac{ f(y_{ji}, \theta)}{M} \right\} \lambda(\mathrm{d}y_{ji}) \nonumber \\
+    & =  \left\{\frac{b_f Z(\theta)}{B_f M}\right\}^n{p(\htheta\mid X)} 
+    \prod_{i=1}^n \sum_{|\cY_i| = 0}^{\infty} \beta^{|\cY_i|}  \prod_{j=1}^{|\cY_i|}  \left\{1 - \frac{Z(\theta)}{M} \right\} \nonumber \\
+%    & =  \frac{p(\htheta|X)}{M^n} \prod_{i=1}^n \sum_{|\cY_i| = 0}^{\infty} \beta^{|\cY_i|}  \left(1 - \frac{1}{M} \right)^{|\cY_i|} \nonumber  \\
+%    & =  {p(\htheta\mid X)} \left\{\frac{b_f Z(\theta)}{B_f M}\right\}^n\prod_{i=1}^n \frac{1}{\tilde{\delta}_{\theta}}, \qquad \tilde{\delta}_{\theta} = 1 - \beta\left\{1-Z(\theta)/M\right\} \nonumber \\
+& =  {p(\htheta\mid X)} \left\{\frac{b_f Z(\theta)}{B_f M}\right\}^n\prod_{i=1}^n \frac{1}{1 - \beta\left\{1-Z(\theta)/M\right\}} \nonumber \\
+    & =   \frac{p(\htheta\mid X)}{\delta_{\theta}^n}, \qquad {\delta_{\theta}} = \frac{B_f}{b_f}\left[ \frac{M}{Z(\theta)} - \beta\left\{\frac{M}{Z(\theta)}-1\right\}\right]
+    =  \frac{B_f}{b_f}\left\{ \frac{M}{Z(\theta)} (1 - \beta) + \beta\right\} \nonumber \\ %M(1-\beta) - \beta  \nonumber 
+%           & \ge   {{\delta}}{p(\htheta\mid X)} \qquad \frac{1}{\delta^{\frac{1}{n}}} = \frac{B_f}{b_f}\left( \frac{1}{R} - \beta(\frac{1}{R}-1)\right)
+%           =  \frac{B_f}{b_f}\left( \frac{1}{R} (1 - \beta) + \beta)\right) \nonumber \\ %M(1-\beta) - \beta  \nonumber 
+& \ge   {{\delta}}{p(\htheta\mid X)}, \qquad \delta = \left\{\frac{b_f}{B_f\left( \beta + R^{-1}\right)}\right\}^n. \nonumber
+\end{align}
+Thus $k(\htheta\mid \theta)$ satisfies equation \eqref{eq:unif_erg}, with 
+$ \delta = \left[ {b_f}\left\{{B_f\left( \beta + R^{-1}\right)}\right\}\right]^n$, and $h(\htheta) = p(\htheta\mid X)$.
+\end{proof}

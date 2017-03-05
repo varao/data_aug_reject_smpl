@@ -1,0 +1,14 @@
+%like Hamiltonian Monte Carlo to carry out efficient inference. 
+Our algorithm, while exact, also provides a framework for faster, approximate algorithms.
+A priori, the number of rejected proposals preceeding any observation is 
+%a random number that a priori 
+unbounded: one can bound the computational cost of an iteration by limiting the maximum number
+of rejected proposals. Similarly, one might share rejected proposals across observations. We leave
+the study of such approximate sampling algorithms %resulting from such user impatience 
+for future research. Also left open is a more careful analysis
+of Markov mixing rates for the applications we considered. There are also a
+ number of applications that we have
+not described here: particularly relevant are rejection samplers for 
+%stochastic differential
+diffusions~\citep{beskos06,bladt2014} .
+

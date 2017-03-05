@@ -1,0 +1,5 @@
+rslt <- inf_gvhd(50)
+df <- data.frame(x=rslt$data[1,],y=rslt$data[2,])
+plt <- ggplot(df) + geom_point(aes(x=x,y=y))
+tmp <- plot_density(rslt$rslt,50)
+plt + geom_contour(data=tmp,aes(x=x,y=y,z=log(z)),size=3,color='grey50') + xlim(-0.1,.75) + ylim(-0.1,.75) + xlab('CD4') + ylab('CD8b') + theme(text = element_text(size=25)) + coord_fixed()

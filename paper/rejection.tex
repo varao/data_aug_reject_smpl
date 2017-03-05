@@ -1,0 +1,274 @@
+Consider a probability density $p(x\mid\theta) = {f(x,\theta)}/{Z(\theta)}$ on some space $\mathbb{X}$, with the parameter $\theta$ 
+taking values in $\Theta$.
+We assume that the normalization constant $Z(\theta)$ is difficult to evaluate, so that na\"{\i}ve sampling from $p(x\mid\theta)$ is
+not easy. We also assume there exists a second, simpler density $q(x\mid\theta) \ge  f(x, \theta)/M$ for all $x$ and some positive $M$.
+
+
+Rejection sampling generates samples distributed as $p(\cdot\mid\theta)$ by first proposing samples from $q(\cdot\mid\theta)$. A draw $y$ from 
+$q(\cdot\mid\theta)$ is accepted with probability ${ f(y, \theta)}/\left\{M q(y\mid\theta)\right\}$. Let there be $r$ rejected proposals preceding an accepted sample 
+$x$, and denote
+them by $\mathcal{Y} = \{y_1, \ldots, y_r \}$ where $r$ itself is a random variable. Write $|\cY| = r$, so that the joint probability is
+\begin{align}
+  p(\mathcal{Y}, x) & = \left[ \prod_{i=1}^{|\cY|} q(y_i\mid\theta) \left\{1 - \frac{f(y_i, \theta)}{M q(y_i\mid\theta)}\right\} \right]
+                        q(x\mid\theta) \left\{ \frac{ f(x, \theta)}{M q(x\mid\theta)} \right\} \nonumber \\
+                    & =  \frac{f(x, \theta)}{M} \prod_{i=1}^{|\mathcal{Y}|}  \left\{(q(y_i\mid\theta) - \frac{ f(y_i, \theta)}{M} \right\}. \label{eq:rej_jnt}
+\end{align}
+%While it is possible to try and integrate 
+This procedure recovers samples from $p(x\mid\theta)$, so that equation~\eqref{eq:rej_jnt} has the correct marginal distribution over $x$~\citep[page 51]{Robert05}.
+%To see why the expression above has the correct marginal distribution over $x$, it is perhaps simplest to look at 
+%Figure \ref{fig:rejecn}. Observe that samples drawn from $q$ are distributed uniformly below the dashed curve, and the process of rejection leaves us with 
+%samples uniformly distributed below the continuous curve. The accepted points are thus distributed as $p(x\mid\theta)$.
+%Since the set $\cY$ and the observation $X$ are drawn i.i.d.\ from the proposal distribution,
+Later, we will need to sample the rejected variables $\cY$ given an observation $x$ drawn from $p(\cdot\mid\theta)$. 
+Simulating from $p(\cY\mid x,\theta)$ involves the two steps in Algorithm \ref{alg:rej_sim},
+which relies on Proposition~\ref{prop:rej_post} about $p(\mathcal{Y}\mid x,\theta)$; see % which we prove in
+the appendix. 
+
+\begin{algo}{Algorithm to sample from $p(\cY\mid x,\theta)$ } \label{alg:rej_sim}
+  \begin{itemize}
+    \item[]
+\begin{tabular}{p{.9cm}p{12.2cm}}
+{Input:}  & A sample $x$, and the parameter value ${\theta}$. \\
+{Output:} & The set of rejected proposals $\cY$ preceding $x$.\\
+\end{tabular}
+\begin{tabbing}
+  \enspace Sample $y_i$ independently from $q(\cdot\mid\theta)$ until a point $\hat{x}$ is accepted.\\
+  \enspace Discard $\hat{x}$, and treat the preceding rejected proposals  as $\cY$.
+\end{tabbing}
+\end{itemize}
+\end{algo}
+
+% being independent of $x$; we prove this below: %in the following proposition.
+% In other words, the conditional distribution $P(\cY\mid x, \theta)$ is independent of $x$, so that the set of rejected proposals are exchangeable across 
+%observations.
+%There is no complication with different values of $x$ having different distributions $|\cY|$.
+%, and this is correct
+%While it is possible to show this is correct by writing down the density $P(\cY|X)$, this is complicated by the fact that $\cY$ take values over a union of
+%a product of Stiefel manifolds, one for each possible length $|\cY|$. Instead, 
+%Below, we provide a simple proof. % of this fact.
+
+\begin{proposition}
+  The set of rejected samples $\cY$ preceding an accepted sample $x$ is independent of $x$: $p(\cY\mid\theta,x) = p(\cY\mid\theta)$. 
+%We can thus assign $x$ the set $\widehat{\cY}$ of another sample, $\hat{x}$.
+\label{prop:rej_post}
+\end{proposition}  
+%a sample That this procedure is valid can be seen by the following sequence of operations.
+
+\section{Bayesian Inference}
+\subsection{Sampling by introducing rejected proposals}  \label{sec:latent_hist}
+% In practical situations, the parameter $\theta$ is unknown, and the Bayesian approach is to place a prior $p(\theta)$ on $\theta$. 
+Given observations $X = \{x_1, \ldots, x_n\}$, and a prior $p(\theta)$, Bayesian inference typically uses Markov chain Monte Carlo simulation
+to sample from an intractable posterior $p(\theta\mid X)$. 
+%We consider the case where $\theta$ consists of two components, $\theta_1$ and $\theta_2$. 
+Split $\theta$ as $(\theta_1, \theta_2)$ so that
+the normalization constant factors as $Z(\theta) = Z_1(\theta_1) Z_2(\theta_2)$,
+with $Z_1$ simple to evaluate, and $Z_2$ intractable.
+Updating $\theta_1$ with $\theta_2$ fixed is easy, and there are situations where we can place a conjugate
+prior on $\theta_1$. %Calculating a Metropolis-Hastings acceptance probability for a new $\theta_2$ however is intractable, so that
+Inference for $\theta_2$ is a doubly-intractable problem. %the dependence of the intractable term on $\theta_2$ makes even calculating
+%Metropolis-Hastings acceptance probabilities intractable. % \citep{murray2006}.
+
+
+
+We assume that $p(x\mid\theta)$ has an associated rejection sampling algorithm with proposal density 
+$q(x\mid\theta) \ge f(x,\theta)/M$. 
+For the $i${th} observation $x_i$, write the preceding set of
+rejected samples as $\cY_i = \{y_{i1}, \ldots, y_{i{|\cY_i|}}\}$.
+The joint density of all samples, both rejected and accepted, is 
+\begin{align*}
+ p(x_1, \cY_1,\ldots, x_n, \cY_n) &= \prod_{i=1}^n \frac{f(x_i, \theta)}{M} 
+ \prod_{j=1}^{|\mathcal{Y}_i|}  \left\{q(y_{ij}\mid\theta) - \frac{f(y_{ij}, \theta)}{M}\right\}. %\label{eq:rej_joint}
+\end{align*}
+This does not involve any intractable terms, so that standard techniques can be applied to update $\theta$. To introduce the
+rejected proposals $\cY_i$, we simply follow Algorithm \ref{alg:rej_sim}: draw proposals from $q(\cdot\mid\theta)$ until we have $n$ acceptances, 
+with the $i${th} batch of rejected proposals forming the set $\cY_i$.
+
+The ability to produce conditionally independent draws of $\cY$ is important when, %some components of $\theta$  
+%have simple conditional posterior distributions. For 
+for instance, there exists a conjugate prior $p_1(\theta_1)$ on $\theta_1$ for the likelihood 
+$p(x\mid\theta_1,\theta_2)$. Introducing the rejected proposals $\cY_i$
+breaks this conjugacy, and the resulting complications in updating $\theta_1$ can slow down mixing, especially when $\theta_1$ is
+high dimensional.
+A much cleaner solution is to sample $\theta_1$ from its conditional posterior $p(\theta_1\mid X,\theta_2)$, introducing the
+auxiliary variables only when needed to update $\theta_2$. After updating $\theta_2$, they can then be discarded.
+Algorithm \ref{alg:rej_post} describes this.
+
+{
+\begin{algo}{An iteration of the Markov chain for posterior inference for $\theta = (\theta_1, \theta_2)$} \label{alg:rej_post}
+  \begin{itemize}
+    \item[]
+\begin{tabular}{p{.9cm}p{12.2cm}}
+{Input:}  & The observations $X$, and the current parameter values $({\theta}_1,{\theta}_2)$. \\
+{Output:} & New parameter values $(\tilde{\theta}_1,\tilde{\theta}_2)$. \\
+\end{tabular}
+\begin{tabbing}
+%  \STATE Introduce the rejected proposals $\cY$ following Proposition \ref{} 
+  \enspace Run Algorithm \ref{alg:rej_sim} $|X|$ times, keeping all the rejected proposals $\displaystyle {\cY = \cup_{i=1}^{|X|} \cY_i}$. \\
+  \enspace Update $\theta_2$ to $\tilde{\theta}_2$ with a Markov kernel having $p({\theta}_2\mid X,\cY,\theta_1)$ as stationary distribution.\\
+  \enspace Discard the rejected proposals $\cY$.\\
+  \enspace Sample a new value of ${\tilde{\theta}}_1$ from the conditional $p(\theta_1\mid X,\tilde{\theta}_2)$. 
+\end{tabbing}
+  \end{itemize}
+\end{algo}
+}
+%Another way to understand our algorithm is to see from~\eqref{eq:rej_joint}
+%that the probability of the rejected samples, with the observations integrated
+%out is
+%\begin{align}
+% p(x_1, \cY_1,\ldots, x_n, \cY_n) &= \prod_{i=1}^n \frac{f(x_i, \theta)}{M} 
+% \prod_{j=1}^{|\mathcal{Y}_i|}  \left\{q(y_{ij}\mid\theta) - \frac{f(y_{ij}, \theta)}{M}\right\}. \label{eq:rej_marg}
+%\end{align}
+
+
+\subsection{Related work}
+ One of the simplest and most widely applicable Markov chain Monte Carlo algorithms for doubly-intractable distributions is the exchange sampler 
+of~\cite{murray2006}. Simplifying an earlier idea by~\cite{Moller2006}, this algorithm effectively amounts to the following:
+given the current parameter $\theta_{\mathrm{curr}}$, propose a new parameter $\theta_{\mathrm{new}}$ according to some proposal distribution.
+Additionally, generate a dataset of $n$ pseudo-observations $\{\hat{x}_i\}$ from $p(x\mid\theta_{\mathrm{new}})$.
+%Then, accept $\theta_{new}$ with probability
+%\begin{align}
+%  acc = \frac{q(\theta_{curr}|\theta_{new}) p(\theta_{new}) \prod_{i=1}^n p(x_i|\theta_{new}) \prod_{i=1}^n p(\hat{x}_i|\theta_{old})}
+%             {q(\theta_{new}|\theta_{curr}) p(\theta_{old}) \prod_{i=1}^n p(x_i|\theta_{old}) \prod_{i=1}^n p(\hat{x}_i|\theta_{new})} \label{eq:exch}
+%\end{align}
+%Effectively, having proposed a new parameter and a new dataset, 
+The exchange algorithm then proposes to exchange parameters associated with datasets. \cite{murray2006} show that 
+all intractable terms cancel out in the resulting acceptance 
+probability, and that the resulting Markov chain has the correct stationary distribution.
+
+While the exchange algorithm is applicable whenever one can sample from the likelihood $p(x\mid\theta)$, 
+it does not exploit the mechanism used to produce these samples. 
+When the latter is a rejection sampling algorithm, each pseudo-observation is preceded by a sequence of rejected proposals.
+These are all discarded, and only the accepted proposals are used to evaluate the new parameter $\theta_{\mathrm{new}}$.
+By contrast our algorithm explicitly instantiates these rejected proposals, so that they can be used to make {good} proposals. 
+In our experiments, we use a Hamiltonian Monte Carlo sampler on the augmented space
+and exploit gradient information to make non-local moves with high probability of acceptance.
+For reasonable acceptance probabilities under the exchange sampler, one must make local updates to $\theta$, or resort to complicated annealing schemes.
+Of course, the exchange sampler is applicable when no efficient rejection 
+sampling scheme exists, such as when carrying out parameter inference for
+a Markov random field.
+
+Another framework for doubly intractable distributions is the pseudo-marginal approach of~\cite{AndRob10}. The idea here is that even if we 
+cannot exactly evaluate the acceptance probability, it is sufficient to use a positive, unbiased estimator: this will still result in a Markov chain with the 
+correct stationary distribution. In our case, instead of requiring an unbiased estimate, we bound $Z(\theta)$ by
+choosing $f(x,\theta) \le Mq(x)$.
+Additionally, like the exchange sampler, the pseudo-marginal method 
+provides a mechanism to evaluate a proposed 
+$\theta_{\mathrm{new}}$; making good proposals~\citep{DahlinLS15} is less obvious. 
+Other papers are~\cite{beskos06}, 
+%which uses a rejection sampling construction to %derive Monte Carlo Expectation-Maximization and 
+based on a rejection sampling algorithm for diffusions, 
+and~\cite{walker11}.
+%, which requiring a bound on the target density of interest.
+
+ Most closely related to our ideas is a sampler from~\cite{adams_gpds}; see also  Section~\ref{sec:gpds}. Their problem also
+involved inferences on the parameters governing the output of a rejection sampling algorithm. Like us, they  augment the state space to
+include the rejected proposals $\cY$, and like us, given these auxiliary variables, they use Hamiltonian Monte Carlo to efficiently update parameters. 
+However, rather than generating independent realizations of $\cY$ when needed,~\cite{adams_gpds}
+outlined a set of Markov transition operators to perturb the current configuration of $\cY$,
+while maintaining the correct
+stationary distribution. With prespecified probabilities, they proposed adding a new variable to $\cY$, deleting a variable from $\cY$
+and perturbing the value of an existing element in $\cY$. These local updates to $\cY$ can slow down Markov chain mixing, require the user to specify
+a number of parameters, and  also involve calculating Metropolis--Hastings acceptance probabilities for each local step. Furthermore, the Markov nature 
+of their updates require them to maintain the rejected proposals at all times; this can break any conjugacy, and
+complicate inference for other parameters.
+%Our algorithm is much simpler and cleaner.
+
+%Additionally, in our problem, adding a persistent
+%set of variables $\cY$ to the state space of the Markov chain leads to complications: note that $\cY$ depends on the parameters $G$ and $H$, so that conditioned on $\cY$,
+%the posterior distributions over $G$ and $H$ are no longer conjugate. %Rather than producing conditionally independent samples of these variables,
+%Thus, with $\cY$ instantiated, the sampler of \cite{adams_gpds} would require complicated alternatives to the simple steps in Section \ref{sec:update_conj}
+% to explore the high-dimensional spaces these variables live in. Instead, Proposition \ref{prop:rej_post} allows our sampler
+%to discard the set $\cY$, reintroducing it only when we need to update the doubly intractable parameter $\bkappa$.
+
+%Another auxiliary variable approach was proposed recently in \cite{walker11}; however this requires bounding $\ml(X\mid\bkappa, G)$ uniformly 
+%over all three variables. Even if we allow this (by limiting the components $\kappa_i$ to a compact sets), the algorithm will scale with the volume of the 
+%Stiefel manifold, and quickly becomes unmanageable.
+
+\section{Convergence properties}
+
+Write the Markov transition density of our chain as $k(\htheta\mid\theta)$, and the $m$-fold transition density as $k^m(\htheta\mid\theta)$.
+%For simplicity, we suppress that these depend on $X$. 
+The Markov chain is uniformly
+ergodic if constants $\rho < 1$ and $C$ exist such that for all $m$ and $\theta$,
+%\begin{align}
+$
+ \int_{\Theta} | p(\htheta\mid X) - k^m(\htheta\mid\theta)| \mathrm{d}\htheta \le C \rho^m. \nonumber
+ $
+%\end{align}
+The term to the left is twice the total variation distance between the desired posterior and the state of the Markov chain initialized at $\theta$ after $m$ iterations. 
+Small values of $\rho$ imply faster mixing.
+The following minorization condition is sufficient for uniform ergodicity~\citep{jones2001}: there exists a probability density $h(\htheta)$ and a $\delta > 0$ such that
+for all $\theta,\htheta \in \Theta$, 
+\begin{align}
+ k(\htheta\mid\theta) \ge \delta h(\htheta). \label{eq:unif_erg}
+\end{align}
+When this holds, the mixing rate $\rho \le 1-\delta$, so that a large $\delta$ implies rapid mixing.
+
+
+Our Markov transition density first introduces the rejected proposals $\cY$, and then conditionally
+updates $\theta$. The set $\cY_i$ preceding the $i$th observation takes values in the union space 
+$\displaystyle \bU \equiv \bigcup_{r=0}^{\infty} \bX^r$. % with $r = |\cY_i|$.
+The output of the rejection sampler, including the $i$th observation, lies in the product space $\bU \times \bX$ with density given by equation \eqref{eq:rej_jnt},
+so that any $(\cY, x) \in \bU \times \bX$ has probability
+\begin{align}
+  p(\cY,  x\mid\theta) = \frac{f(x, \theta)}{M}  \lambda(\mathrm{d}x) \prod_{i=1}^{|\mathcal{Y}|}  \left\{q(y_i\mid\theta) - \frac{ f(y_i, \theta)}{M} \right\} \lambda(\mathrm{d}y_i). \label{eq:pr_dens}
+\end{align}
+Here, $\lambda$ is the measure with respect to which the densities $f$ and $q$ are defined, and it is easy to see that 
+equation~\eqref{eq:pr_dens} integrates to $1$. From Bayes' rule, the conditional density over $\cY$ is 
+\begin{align}
+  p(\cY \mid x, \theta) = \frac{Z(\theta)}{M}  \prod_{i=1}^{|\mathcal{Y}|}  \left\{q(y_i\mid\theta) - \frac{ f(y_i, \theta)}{M} \right\} \lambda(\mathrm{d}y_i). \label{eq:rej_marg}
+\end{align}
+The fact that the right-hand side does not depend on $x$ is an another proof of Proposition \ref{prop:rej_post}.
+Equation~\eqref{eq:rej_marg} also lets us to motivate our algorithm 
+outside the context of rejection sampling: we 
+can view $\cY$ as convenient auxiliary variables that are independent of
+$x$, and whose density is such that 
+$Z(\theta)$ cancels when evaluating the joint density of $(x,\cY)$.
+
+The density from equation~\eqref{eq:rej_marg} characterizes the data augmentation step of our sampling algorithm. In practice, we need as many draws from this density as there are observations. 
+The next step involves updating $\theta$ given $(\cY, X,\theta)$, and depends on the problem at hand.
+We simplify matters by assuming that we can 
+sample from $p({\theta}\mid\cY, X)$ independently of the old $\theta$: this is the classical data augmentation algorithm. We also assume that 
+the functions $f(\cdot,\theta)$ and $q(\cdot\mid\theta)$ are uniformly bounded from above and below by finite, positive quantities $(B_f, b_f)$ and 
+$(B_q, b_q)$ respectively, and that $\int_{\bX} \lambda(\mathrm{d}x) < \infty$.
+It follows that there exists positive numbers $r$ and $R$ that minimize $1-{f(x,\theta)}/{\{MZ(\theta)\}}$ and ${Z(\theta)}/{M}$.
+%, that these exist follows from the earlier bounds.
+%$\beta = br/B$. We can easily verify that % so that the following condition holds:
+%%\begin{align}
+%$
+%  p({\htheta}\mid\cY, X) \ge \beta^{|\cY|} p(\htheta\mid X).$ %\nonumber
+%%\end{align}
+We can now state our result.
+\begin{theorem}
+  Assume that $\int_{\bX} \lambda(\mathrm{d}x) < \infty$ and that positive bounds $b_f, B_f, b_q, B_q$ exist with $r$ and $R$ as defined
+  earlier. %the proposal density $q(x\mid\theta)$ has uniform lower and upper bounds $b$ and $B$, and the probability of rejection is
+%bounded below by $r$, with $r,b >0$.
+Further assume we can sample from the conditional 
+$p({\theta}\mid\cY, X)$. Then our data augmentation algorithm is uniformly ergodic with mixing rate $\rho$ bounded above by
+$ \rho = 1-\left[{b_f}/\left\{B_f\left( \beta + R^{-1}\right)\right\}\right]^n$, 
+%$\left[1 - \frac{1}{\left\{M(1-\beta) - \beta\right\}^n}\right]$, 
+where $\beta = b_qr/B_q$ and $n$ is the number of observations.  \label{thrm:conv_rate}
+\end{theorem}  
+Despite our assumptions, our theorem has a number of useful implications. The ratio $b_f/B_f$ is a measure of how flat the function $f$ is,
+and the closer it is to unity, the more efficient rejection sampling for $f$ can be. From our result, the smaller the ratio, the larger the bound on $\rho$,
+suggesting slower mixing. This is consistent with more rejected proposals $\cY$ increasing the coupling between successive $\theta$'s in the 
+Markov chain.
+On the other hand, a small $b_q/B_q$ suggests a proposal distribution tailored to $f$, and our result shows that this implies faster mixing.
+The numbers $r$ and $1/R$ are measures of mismatch between the the target and proposal density, with small values giving better mixing.
+Finally, more observations $n$ result in slower mixing. 
+%Again, from the construction of our chain this makes sense. 
+We suspect that this last property holds for most exact samplers
+for doubly-intractable distributions, though we are unaware of any such result.
+
+Even without assuming we can sample from $p(\theta\mid\cY,X)$, our ability to 
+sample $\cY$ independently means that the marginal chain over $\theta$ is still Markovian. By contrast, existing approaches~\citep{adams_gpds, walker11} only produce dependent updates
+in the complicated auxiliary space: they sample from $p(\hat{\cY}\mid\theta, \cY,X)$ by making local updates to $\cY$. Consequently, these chains are Markovian only in the 
+complicated augmented 
+space, and the marginal processes over $\theta$ have long-term dependencies. Besides affecting mixing, this can also complicate analysis.
+
+
+%In the following sections, we apply our sampling algorithm to three problems, one involving a Bayesian analysis of flow-cytometry data, the second,
+%Bayesian inference for the matrix Langevin distribution, and the last the
+%Gaussian process density sampler of \cite{adams_gpds}. %Adapting the theory of this section to these problems involves considerable work, and we leave this for the future.
+
+

@@ -1,0 +1,38 @@
+
+For $n$ pairs $\{X_i, \cY_i\}$, %1,\ldots,X_n$ and rejections $\cY_1, \ldots, \cY_n$, 
+with $\tilde{n} = n + \sum_{i=1}^n |\mathcal{Y}_i|$, and
+$S = \sum_{i=1}^n(X_i + \sum_{j=1}^{|\mathcal{Y}_i|} Y_{ij})$, we have %The log joint probability is
+%\begin{align}
+% \log\left[p(\{X_i,\cY_i\}|\bkappa,G)\right] &= \text{trace}(G^T \bkappa S) +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left[ \log \left\{D(\bkappa) - D(Y_{ij}, \bkappa) \right\}\right.  %\nonumber \\
+% - \left. \log\left\{D(Y_{ij}, \bkappa)\right\}\right] - \tilde{n} \log\left\{D(\bkappa)\right\}. \nonumber
+%%\left(\sum_{i=1}^n X_i + \sum_{j=1}^{|\cY_i|}Y_{ij} \right)
+%\end{align}
+\begin{align}
+  \log\left[p(\{X_i,\cY_i\}|\bkappa)\right] &= \text{trace}(\bkappa G^T S) +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|} \log \left\{\frac{D(\bkappa) - D(Y_{ij}, \bkappa) }{  %\nonumber \\
+  D(Y_{ij}, \bkappa)}\right\} - \tilde{n} \log D(\bkappa). \nonumber
+%\left(\sum_{i=1}^n X_i + \sum_{j=1}^{|\cY_i|}Y_{ij} \right)
+\end{align}
+Let $\tD(Y, \bkappa) =
+{\prod_{r=1}^p { \|\kappa_r N^T_r G_{[:r]} \|^{-(d-r-1)/2 }}{ I_{(d-r-1)/2}(\| \kappa_r N^T_r G_{[:r]} \|)} }$, and %, so that $D(Y,\bkappa) = C\tD(Y, \bkappa)$.
+ $\tD(\bkappa) =
+ {\prod_{r=1}^p { \|\kappa_r \|^{-(d-r-1)/2 }}{ I_{(d-r-1)/2}(\| \kappa_r \|)} }$.
+ Since ${\dif }\left\{{x^{-m}}{I_m(x)} \right\}/{\dif x}= x^{-m}I_{m+1}(x)$, 
+\begin{align}
+  \quad  \frac{\dif \tD(Y, \bkappa)}{\dif \kappa_j} & = N^T_jG_{[:j]} \tD(Y,\bkappa) \frac{I_{(d-j+1)/2}}{I_{(d-j-1)/2}}(\kappa_j N^T_jG_{[:j]} ),  \quad  %\nonumber\\
+\quad  \frac{\dif \tD(\bkappa)}{\dif \kappa_j}     = \tD(\bkappa) \frac{I_{(d-j+1)/2}}{I_{(d-j-1)/2}}(\kappa_j). \nonumber
+\intertext{Then, writing $L = \log p(\{X_i,\cY_i\}|\bkappa) $, and $\tD'$ for $\mathrm{d}\tD/\mathrm{d}\kappa_k$, we have}
+%from equation~\eqref{eq:rej_joint1}}
+\frac{\dif L }{\dif \kappa_k} &= G_{[:k]}^T S_{[:k]} +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left\{\frac{\tD'(\bkappa) - \tD'(Y_{ij}, \bkappa) }{\tD(\bkappa) - \tD(Y_{ij}, \bkappa)} -
+\frac{\tD'(Y_{ij}, \bkappa) }{\tD(Y_{ij}, \bkappa) }  \right\} - \tilde{n}\frac{\tD'(\bkappa)}{\tD(\bkappa)}  \nonumber\\
+%   &=  G_{[,k]}^T S_{[,k]} +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left(\frac{\tD'(\bkappa)\tD(Y_{ij},\bkappa) - \tD(\bkappa)
+%                            \tD'(Y_{i,j}, \bkappa) }{\tD(Y_{i,j}, \bkappa) (\tD(\bkappa) - \tD(Y_{i,j}, \bkappa))}  \right)
+%              - N  \frac{I_{(d-j+1)/2}}{I_{(d-j-1)/2}}(\kappa_k)  \\
+%   &=  G_{[,k]}^T S_{[,k]} +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left(\frac{\tD'(\bkappa) - \tD(\bkappa)N^T_kG_k \frac{I_{(d-k+1)/2}}{I_{(d-k-1)/2}}(\kappa_k N^T_kG_k ) }
+%                            { (\tD(\bkappa) - \tD(Y_{i,j}, \bkappa))}  \right)  \nonumber \\
+%       & \qquad       - N  \frac{I_{(d-j+1)/2}}{I_{(d-j-1)/2}}(\kappa_k)  \\
+&\hspace{-.0in}=  G_{[:k]}^T S_{[:k]} +\sum_{i=1}^n \sum_{j=1}^{|\cY_i|}\left\{\frac{ \frac{I_{(d-k+1)/2}(\kappa_k)}{I_{(d-k-1)/2}(\kappa_k)}  - 
+N^T_kG_{[:k]} \frac{I_{(d-k+1)/2}(\kappa_k N^T_kG_{[:k]} )}{I_{(d-k-1)/2}(\kappa_k N^T_kG_{[:k]} )} }
+                             { 1 - {\tD(Y_{ij}, \bkappa)}/{\tD(\bkappa)}}  \right\}  
+                             - \tilde{n}  \frac{I_{(d-k+1)/2}(\kappa_k)}{I_{(d-k-1)/2}(\kappa_k)}. \nonumber
+\end{align}
+
